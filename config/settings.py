@@ -27,10 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'user.User'
 
-# Application definition
+ # Application definition
 LOCAL_APPS = [
     'user',
+    'catalog',
+    'django_celery_results',
+    "rest_framework",
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -84,11 +88,9 @@ DATABASES = {
 
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": ("REDIS_URL", "redis://127.0.0.1:6379/1"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "TIMEOUT": 120,
     }
 }
 
@@ -137,6 +139,17 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 }
 
+
+
+
+# CELERY_TIMEZONE = "Iran/Tehran"
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
+#
+# CELERY_RESULT_BACKEND = 'django-db'
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/

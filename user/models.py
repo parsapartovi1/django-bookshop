@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 import random
 import string
 from django.core.exceptions import ValidationError
-
+from catalog.models import Book
 # Create your models here.
 
 
@@ -74,3 +74,65 @@ class User(AbstractUser):
     def __str__(self):
         return self.number
 
+
+class Profile(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="profileuser",
+    )
+
+    photo = models.ImageField(
+        upload_to="profile_photos",
+        validators=[FileExtensionValidator(["jpg", "png"])],
+        verbose_name="profile photo",
+        help_text="upload your photo",
+        default="profile_photos/default.jpg",
+    )
+
+    age = models.IntegerField(
+        verbose_name="age",
+        help_text="Enter your age",
+        blank=True,
+        null=True,
+    )
+
+    address = models.CharField(
+        verbose_name="address",
+        help_text="Enter your address",
+        blank=True,
+        null=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    last_update = models.DateTimeField(
+        auto_now=True,
+    )
+
+class Review(models.Model) :
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="userreview",
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        verbose_name="bookreview",
+    )
+
+    text = models.TextField(
+        verbose_name="review text",
+        help_text="Enter your review",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+    last_update = models.DateTimeField(
+        auto_now=True,
+    )

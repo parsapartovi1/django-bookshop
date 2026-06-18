@@ -1,0 +1,127 @@
+from django.core.validators import FileExtensionValidator
+from django.db import models
+
+from payment.models import Discount
+
+
+# Create your models here.
+
+
+class Author(models.Model):
+    name = models.CharField(
+        max_length=100,
+        verbose_name='Author Name',
+        help_text='enter Author Name',
+    )
+
+    bio = models.TextField(
+        verbose_name='Author Bio',
+        help_text='enter Author Bio',
+        blank=True,
+        null=True,
+    )
+
+    photo = models.ImageField(
+        verbose_name='Author Photo',
+        help_text='enter Author Photo',
+        validators=[FileExtensionValidator(['jpg', 'png'])],
+        blank=True,
+        null=True,
+    )
+
+    birth_date = models.DateField(
+        verbose_name='Author Birth Date',
+        help_text='enter Author Birth Date',
+        blank=True,
+        null=True,
+    )
+
+
+
+class Book(models.Model):
+    name = models.CharField(
+        max_length=100,
+        verbose_name='Book Name',
+        help_text='enter Books Name',
+         )
+
+    description = models.TextField(
+        verbose_name='Book Description',
+        help_text='enter Books Description'
+    )
+
+    price = models.FloatField(
+        verbose_name='Book Price',
+    )
+
+    author = models.ForeignKey(
+        Author,
+        on_delete=models.CASCADE,
+        verbose_name='BookAuthor',
+    )
+
+    photo = models.ImageField(
+        verbose_name='Book Image',
+        help_text='enter Books Image',
+        validators=[FileExtensionValidator(['jpg', 'png'])],
+    )
+
+    is_online = models.BooleanField(
+        verbose_name='Book Online',
+        default=False,
+    )
+
+    level = models.CharField(
+        verbose_name='Book Level',
+        max_length=100,
+        help_text='enter Books reader Level',
+    )
+
+    language = models.CharField(
+        verbose_name='Book Language',
+        max_length=100,
+        help_text='enter Books Language',
+    )
+
+    discount = models.ForeignKey(
+        Discount,
+        on_delete=models.CASCADE,
+        verbose_name='BookDiscount',
+        help_text='enter Books Discount',
+    )
+
+
+class Category(models.Model):
+    name = models.CharField(
+        max_length=100,
+        verbose_name='Category Name',
+    )
+
+
+class OnlineBook(models.Model):
+    name = models.CharField(
+        max_length=100,
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        verbose_name='Online Book',
+    )
+
+    url = models.URLField(
+        verbose_name='Online Book URL',
+        help_text='enter Online Book URL',
+    )
+
+    format =models.CharField(
+         max_length=100,
+        verbose_name='Online Book Format',
+        help_text='enter Online Book Format',
+    )
+
+    accesstype = models.CharField(
+        max_length=100,
+        verbose_name='Online Book Access Type',
+        help_text='enter Online Book Access Type',
+    )

@@ -15,7 +15,7 @@ from config.settings import KAVENEGAR_API_KEY
 
 from apps_serializers.user_serializer import (
     OTPVerifySerializer,
-    OTPrequestserializer,
+    OTPRequestSerializer,
 )
 
 
@@ -41,21 +41,21 @@ class GenerateOTPViewSet(viewsets.ModelViewSet):
 
             number = serializer.validated_data["number"]
 
-            # cooldown_key = f"otp_cooldown:{number}"
+            cooldown_key = f"otp_cooldown:{number}"
 
-            # if redis_client.exists(cooldown_key):
-            #
-            #     ttl = redis_client.ttl(cooldown_key)
-            #
-            #     return Response(
-            #         {
-            #             "error": (
-            #                 f"code already sent, "
-            #                 f"try again in 2 minutes"
-            #             )
-            #         },
-            #         status=status.HTTP_429_TOO_MANY_REQUESTS
-            #     )
+            if redis_client.exists(cooldown_key):
+
+                ttl = redis_client.ttl(cooldown_key)
+
+                return Response(
+                    {
+                        "error": (
+                            f"code already sent, "
+                            f"try again in 2 minutes"
+                        )
+                    },
+                    status=status.HTTP_429_TOO_MANY_REQUESTS
+                )
 
 
             otp_code = ''.join(
@@ -68,11 +68,11 @@ class GenerateOTPViewSet(viewsets.ModelViewSet):
                 otp_code
             )
 
-            # redis_client.setex(
-            #     cooldown_key,
-            #     120,
-            #     "locked"
-            # )
+            redis_client.setex(
+                cooldown_key,
+                120,
+                "locked"
+            )
 
             try:
 
