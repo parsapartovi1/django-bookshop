@@ -79,7 +79,7 @@ class Profile(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name="profileuser",
+        related_name="profile_user",
     )
 
     photo = models.ImageField(
@@ -112,17 +112,25 @@ class Profile(models.Model):
         auto_now=True,
     )
 
+    class Meta:
+        verbose_name = "2.profile"
+
+    def __str__(self):
+        return f"profile of {self.user.number}"
+
+
+
 class Review(models.Model) :
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name="userreview",
+        related_name="user_review",
     )
 
     book = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,
-        verbose_name="bookreview",
+        related_name="book_review",
     )
 
     text = models.TextField(
@@ -136,3 +144,9 @@ class Review(models.Model) :
     last_update = models.DateTimeField(
         auto_now=True,
     )
+
+    class Meta:
+        verbose_name = "3. review"
+
+    def __str__(self):
+        return f"review of {self.user.number}"

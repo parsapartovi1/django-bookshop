@@ -36,6 +36,11 @@ class Author(models.Model):
         null=True,
     )
 
+    class Meta:
+        verbose_name = '2.Author Name'
+
+    def __str__(self):
+        return self.name + self.bio[0:10]+"..."
 
 
 class Book(models.Model):
@@ -90,12 +95,23 @@ class Book(models.Model):
         help_text='enter Books Discount',
     )
 
+    class Meta:
+        verbose_name = '1.Book Name'
+
+    def __str__(self):
+        return self.name + self.description[0:10]+"..."
+
 
 class Category(models.Model):
     name = models.CharField(
         max_length=100,
         verbose_name='Category Name',
     )
+    class Meta:
+        verbose_name = '3.Category Name'
+
+    def __str__(self):
+        return self.name
 
 
 class OnlineBook(models.Model):
@@ -120,8 +136,14 @@ class OnlineBook(models.Model):
         help_text='enter Online Book Format',
     )
 
-    accesstype = models.CharField(
+    access_type = models.CharField(
         max_length=100,
         verbose_name='Online Book Access Type',
         help_text='enter Online Book Access Type',
     )
+
+    class Meta:
+        verbose_name = '4.Online Book'
+
+    def __str__(self):
+        return self.name + self.format

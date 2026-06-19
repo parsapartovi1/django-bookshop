@@ -3,15 +3,17 @@ from django.db import models
 from catalog.models import Book
 from user.models import User
 
-
-# Create your models here.
-
+from .choices import (
+    ORDER_STATUS_CHOICES,
+    PAYMENT_STATUS_CHOICES
+)
 
 
 class Cart(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="user_cart"
     )
 
     total_price = models.DecimalField(
@@ -20,11 +22,11 @@ class Cart(models.Model):
     )
 
     order_status = models.CharField(
-        max_length=20,
+        choices=ORDER_STATUS_CHOICES
     )
 
     payment_status = models.BooleanField(
-        default=False
+        choices=PAYMENT_STATUS_CHOICES
     )
 
     created_at = models.DateTimeField(
@@ -35,15 +37,24 @@ class Cart(models.Model):
         auto_now=True
     )
 
+    class Meta:
+        verbose_name_plural = '1.Cart'
+
+    def __str__(self):
+        return self.order_status
+
+
+
 class CartItem(models.Model):
     cart = models.ForeignKey(
         Cart,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="cart_item"
     )
     book = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,
-        verbose_name="cartbookitem"
+        related_name="cart_book_item"
     )
 
     quantity = models.IntegerField(
@@ -57,3 +68,9 @@ class CartItem(models.Model):
     last_update = models.DateTimeField(
         auto_now=True
     )
+
+    class Meta:
+        verbose_name_plural = '2.CartItem'
+
+    def __str__(self):
+        return self.quantity

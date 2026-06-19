@@ -5,8 +5,6 @@ from catalog.models import Book
 from user.models import User
 
 
-# Create your models here.
-
 
 class Premium(models.Model):
     user = models.ForeignKey(
@@ -20,22 +18,38 @@ class Premium(models.Model):
         null=True,
     )
 
-    premium_expiration = models.TimeField(
+    premium_expiration = models.DateTimeField(
         blank=True,
         null=True,
     )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        verbose_name = "1.premium accounts"
+
+    def __str__(self):
+        return f"{self.user.number} premium account"
+
+
 
 class Wallet(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='userwallet',
+        related_name='user_wallet',
     )
 
     cart = models.ForeignKey(
         Cart,
         on_delete=models.CASCADE,
-        related_name='usercart',
+        related_name='user_cart_wallet',
     )
 
     amount = models.DecimalField(
@@ -47,8 +61,19 @@ class Wallet(models.Model):
     premium = models.ForeignKey(
         Premium,
         on_delete=models.CASCADE,
-        related_name='userpremium',
+        related_name='user_premium',
     )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        verbose_name = "2.users wallet"
 
 
 class Discount(models.Model):
@@ -58,7 +83,21 @@ class Discount(models.Model):
         default=0,
     )
 
-    expiration = models.TimeField(
+    expiration = models.DateTimeField(
         verbose_name='expiration',
         help_text='Expiration time',
     )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        verbose_name = "3.discount"
+
+    def __str__(self):
+        return f"{self.amount} in {self.expiration}"
