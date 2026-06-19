@@ -55,3 +55,24 @@ GENRE_CHOICES = (
     (BUSINESS, "Business"),
     (RELIGION, "Religion"),
 )
+
+
+PREMIUM = "premium"
+CASH = "cash"
+PREMUIM_CASH = "premium and cash"
+
+ACCESS_TYPE_CHOICES = (
+    (PREMIUM, "Premium"),
+    (CASH, "Cash"),
+    (PREMUIM_CASH, "Premium and Cash"),
+)
+
+PDF = "pdf"
+EPUB = "epub"
+DOCX = "docx"
+
+FORMAT_CHOICES = (
+    (PDF, "PDF"),
+    (EPUB, "EPUB"),
+    (DOCX, "DocX"),
+)

@@ -24,7 +24,7 @@ class Cart(models.Model):
         choices=ORDER_STATUS_CHOICES
     )
 
-    payment_status = models.BooleanField(
+    payment_status = models.CharField(
         choices=PAYMENT_STATUS_CHOICES
     )
 
@@ -72,4 +72,4 @@ class CartItem(models.Model):
         verbose_name_plural = '2.CartItem'
 
     def __str__(self):
-        return self.quantity
+        return f"{self.book} x {self.quantity}"

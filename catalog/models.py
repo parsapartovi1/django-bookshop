@@ -1,3 +1,5 @@
+from datetime import timezone, datetime
+
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
@@ -5,8 +7,17 @@ from django.db import models
 from .choices import (
     LEVEL_CHOICES,
     LANGUAGE_CHOICES,
-    GENRE_CHOICES
+    GENRE_CHOICES,
+    ACCESS_TYPE_CHOICES,
+    FORMAT_CHOICES
 )
+
+from django.utils import timezone
+from datetime import timedelta
+
+
+def default_expiration():
+    return timezone.now() + timedelta(hours=24)
 
 
 class Author(models.Model):
@@ -42,7 +53,7 @@ class Author(models.Model):
         verbose_name = '2.Author Name'
 
     def __str__(self):
-        return self.name + self.bio[0:10]+"..."
+        return self.name + self.bio[0:10] or " " + "..."
 
 class Discount(models.Model):
     amount = models.DecimalField(
@@ -54,6 +65,7 @@ class Discount(models.Model):
     expiration = models.DateTimeField(
         verbose_name='expiration',
         help_text='Expiration time',
+        default=default_expiration,
     )
 
     created_at = models.DateTimeField(
@@ -83,7 +95,7 @@ class Book(models.Model):
         help_text='enter Books Description'
     )
 
-    price = models.FloatField(
+    price = models.DecimalField(
         verbose_name='Book Price',
     )
 
@@ -97,11 +109,6 @@ class Book(models.Model):
         verbose_name='Book Image',
         help_text='enter Books Image',
         validators=[FileExtensionValidator(['jpg', 'png'])],
-    )
-
-    is_online = models.BooleanField(
-        verbose_name='Book Online',
-        default=False,
     )
 
     level = models.CharField(
@@ -123,13 +130,15 @@ class Book(models.Model):
         on_delete=models.CASCADE,
         verbose_name='BookDiscount',
         help_text='enter Books Discount',
+        blank=True,
+        null=True,
     )
 
     class Meta:
-        verbose_name = '1.Books'
+        verbose_name = '1.Book'
 
     def __str__(self):
-        return self.name + self.description[0:10]+"..."
+        return self.name + " " + self.description[0:10]+"..."
 
 
 class Genre(models.Model):
@@ -165,12 +174,14 @@ class OnlineBook(models.Model):
          max_length=100,
         verbose_name='Online Book Format',
         help_text='enter Online Book Format',
+        choices=FORMAT_CHOICES
     )
 
     access_type = models.CharField(
         max_length=100,
         verbose_name='Online Book Access Type',
         help_text='enter Online Book Access Type',
+         choices=ACCESS_TYPE_CHOICES
     )
 
     class Meta:
