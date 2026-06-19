@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 import random
 import string
 from django.core.exceptions import ValidationError
-from catalog.models import Book
 # Create your models here.
 
 
@@ -69,7 +68,7 @@ class User(AbstractUser):
     objects = UserManager()
 
     class Meta:
-        verbose_name = "1. user"
+        verbose_name = "1. account"
 
     def __str__(self):
         return self.number
@@ -128,9 +127,9 @@ class Review(models.Model) :
     )
 
     book = models.ForeignKey(
-        Book,
+        "catalog.Book",
         on_delete=models.CASCADE,
-        related_name="book_review",
+        related_name="book_reviews",
     )
 
     text = models.TextField(

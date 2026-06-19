@@ -1,10 +1,12 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from payment.models import Discount
 
-
-# Create your models here.
+from .choices import (
+    LEVEL_CHOICES,
+    LANGUAGE_CHOICES,
+    GENRE_CHOICES
+)
 
 
 class Author(models.Model):
@@ -41,6 +43,32 @@ class Author(models.Model):
 
     def __str__(self):
         return self.name + self.bio[0:10]+"..."
+
+class Discount(models.Model):
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
+
+    expiration = models.DateTimeField(
+        verbose_name='expiration',
+        help_text='Expiration time',
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        verbose_name = "3.discount"
+
+    def __str__(self):
+        return f"{self.amount} in {self.expiration}"
 
 
 class Book(models.Model):
@@ -80,12 +108,14 @@ class Book(models.Model):
         verbose_name='Book Level',
         max_length=100,
         help_text='enter Books reader Level',
+        choices=LEVEL_CHOICES,
     )
 
     language = models.CharField(
         verbose_name='Book Language',
         max_length=100,
         help_text='enter Books Language',
+        choices=LANGUAGE_CHOICES,
     )
 
     discount = models.ForeignKey(
@@ -96,16 +126,17 @@ class Book(models.Model):
     )
 
     class Meta:
-        verbose_name = '1.Book Name'
+        verbose_name = '1.Books'
 
     def __str__(self):
         return self.name + self.description[0:10]+"..."
 
 
-class Category(models.Model):
+class Genre(models.Model):
     name = models.CharField(
         max_length=100,
         verbose_name='Category Name',
+        choices=GENRE_CHOICES,
     )
     class Meta:
         verbose_name = '3.Category Name'

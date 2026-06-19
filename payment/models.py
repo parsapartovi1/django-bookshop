@@ -1,8 +1,7 @@
 from django.db import models
 
-from cart.models import Cart
 from catalog.models import Book
-from user.models import User
+from account.models import User
 
 
 
@@ -32,7 +31,7 @@ class Premium(models.Model):
     )
 
     class Meta:
-        verbose_name = "1.premium accounts"
+        verbose_name = "1.premium account"
 
     def __str__(self):
         return f"{self.user.number} premium account"
@@ -47,7 +46,7 @@ class Wallet(models.Model):
     )
 
     cart = models.ForeignKey(
-        Cart,
+        "cart.Cart",
         on_delete=models.CASCADE,
         related_name='user_cart_wallet',
     )
@@ -76,28 +75,3 @@ class Wallet(models.Model):
         verbose_name = "2.users wallet"
 
 
-class Discount(models.Model):
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        default=0,
-    )
-
-    expiration = models.DateTimeField(
-        verbose_name='expiration',
-        help_text='Expiration time',
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )
-
-    class Meta:
-        verbose_name = "3.discount"
-
-    def __str__(self):
-        return f"{self.amount} in {self.expiration}"

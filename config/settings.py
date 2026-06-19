@@ -27,16 +27,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'account.User'
 
  # Application definition
 LOCAL_APPS = [
-    'user',
+    'account',
     'catalog',
+    'cart',
+    'payment',
     'django_celery_results',
     "rest_framework",
 ]
+
 INSTALLED_APPS = [
+    'jazzmin',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

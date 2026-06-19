@@ -1,7 +1,6 @@
 from django.db import models
 
-from catalog.models import Book
-from user.models import User
+from account.models import User
 
 from .choices import (
     ORDER_STATUS_CHOICES,
@@ -52,7 +51,7 @@ class CartItem(models.Model):
         related_name="cart_item"
     )
     book = models.ForeignKey(
-        Book,
+        "catalog.Book",
         on_delete=models.CASCADE,
         related_name="cart_book_item"
     )

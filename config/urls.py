@@ -23,5 +23,5 @@ urlpatterns = [
     path("", lambda request: redirect("/admin"), name="home"),
     path('admin/', admin.site.urls),
 
-    path('user/', include('user.urls')),
+    path('account/', include('account.urls')),
 ]

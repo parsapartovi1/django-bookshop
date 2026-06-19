@@ -9,7 +9,7 @@ import requests
 import os
 import redis
 
-from user.models import User
+from account.models import User
 
 from config.settings import KAVENEGAR_API_KEY
 
@@ -161,11 +161,11 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
 
         redis_client.delete(f"otp:{number}")
 
-        # user exists
+        # account exists
         if User.objects.filter(number=number).exists():
 
             user = User.objects.get(number=number)
-            # profile, _ = Profile.objects.get_or_create(user=user)
+            # profile, _ = Profile.objects.get_or_create(account=account)
 
             refresh = RefreshToken.for_user(user)
 
@@ -179,14 +179,14 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
             # display_name = (
             #         profile.fullname
             #         or profile.username
-            #         or user.number
+            #         or account.number
             # )
 
             return Response(
                 {
                     # "message": f"Welcome back {display_name}",
                     "is_new": False,
-                    "user": {
+                    "account": {
                         "id": user.id,
                         "number": user.number,
                         "email": user.email,
@@ -211,7 +211,7 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
         user = User.objects.create(number=number)
 
         # profile = Profile.objects.create(
-        #     user=user,
+        #     account=account,
         #     username=generate_unique_profile_username()
         # )
 
@@ -222,7 +222,7 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
                 "message": "OTP verified. Please complete registration.",
                 "is_new": True,
 
-                "user": {
+                "account": {
                     "id": user.id,
                     "number": user.number
                 },
