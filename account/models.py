@@ -81,6 +81,13 @@ class Profile(models.Model):
         related_name="profile_user",
     )
 
+    fullname = models.CharField(
+        max_length=36,
+        verbose_name="name",
+        help_text="whats your name?",
+        default="",
+    )
+
     photo = models.ImageField(
         upload_to="profile_photos",
         validators=[FileExtensionValidator(["jpg", "png"])],

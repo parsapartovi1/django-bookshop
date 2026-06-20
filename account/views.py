@@ -1,28 +1,34 @@
-from django.shortcuts import render
 import random
-from django.core import serializers
-from rest_framework import status, viewsets, settings
+
+from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-import requests
+
 
 import os
 import redis
 
-from account.models import User
+from account.models import (
+    User,
+    Profile,
+    Review
+)
 
-from config.settings import KAVENEGAR_API_KEY
+from catalog.models import Book
 
 from apps_serializers.user_serializer import (
     OTPVerifySerializer,
     OTPRequestSerializer,
+    CompleteProfileSerializer,
+    ReviewSerializer,
 )
-
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-# Create your views here.
+from kombu.exceptions import OperationalError
+from account.tasks import send_otp_sms
 
+from rest_framework.exceptions import ValidationError, PermissionDenied
 
 redis_client = redis.Redis.from_url(
     os.getenv("REDIS_URL", "redis://127.0.0.1:6379/1"),
@@ -68,65 +74,37 @@ class GenerateOTPViewSet(viewsets.ModelViewSet):
                 otp_code
             )
 
-            redis_client.setex(
-                cooldown_key,
-                120,
-                "locked"
-            )
+            # redis_client.setex(
+            #     cooldown_key,
+            #     120,
+            #     "locked"
+            # )
 
-            try:
+#             try:
+#                 send_otp_sms.delay(number, otp_code)
+#
+#             except OperationalError:
+#                 return Response(
+#                     {"error": "OTP service temporarily unavailable"},
+#                     status=status.HTTP_503_SERVICE_UNAVAILABLE,
+#
+# )
+#             exists = User.objects.filter(
+#                 number=number
+#             ).exists()
 
-                api_key = KAVENEGAR_API_KEY
+            # return Response(
+            #     {
+            #         "message": "OTP sent successfully",
+            #     },
+            #     status=status.HTTP_200_OK
+            # )
 
-                url = (
-                    f"https://api.kavenegar.com/v1/"
-                    f"{api_key}/sms/send.json"
-                )
-
-                payload = {
-                    "sender": "2000660110",
-                    "receptor": number,
-                    "message": f"کد ورود: {otp_code}"
-                }
-
-                response = requests.post(
-                    url,
-                    data=payload,
-                    timeout=5
-                )
-
-                if response.status_code != 200:
-
-                    return Response(
-                        {"error": "Failed to send SMS"},
-                        status=(
-                            status.HTTP_500_INTERNAL_SERVER_ERROR
-                        )
-                    )
-
-            except Exception:
-
-                return Response(
-                    {"error": "SMS service unavailable"},
-                    status=(
-                        status.HTTP_503_SERVICE_UNAVAILABLE
-                    )
-                )
-
-
-            exists = User.objects.filter(
-                number=number
-            ).exists()
+            print(f"✅ OTP: {otp_code}")
 
             return Response(
                 {
-                    "message": "OTP sent successfully",
-
-                    "status": (
-                        "login"
-                        if exists
-                        else "registration"
-                    )
+                    "message": "OTP sent , expiration in 2 minutes"
                 },
                 status=status.HTTP_200_OK
             )
@@ -161,30 +139,29 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
 
         redis_client.delete(f"otp:{number}")
 
-        # account exists
+
         if User.objects.filter(number=number).exists():
 
             user = User.objects.get(number=number)
-            # profile, _ = Profile.objects.get_or_create(account=account)
+            profile, _ = Profile.objects.get_or_create(user=user)
 
             refresh = RefreshToken.for_user(user)
 
-            # profile_pic_url = None
-            # if profile.profile_pic and profile.profile_pic.name:
-            #     try:
-            #         profile_pic_url = profile.profile_pic.url
-            #     except ValueError:
-            #         profile_pic_url = None
+            profile_pic_url = None
+            if profile.photo and profile.photo.name:
+                try:
+                    profile_pic_url = profile.photo.url
+                except ValueError:
+                    profile_pic_url = None
 
-            # display_name = (
-            #         profile.fullname
-            #         or profile.username
-            #         or account.number
-            # )
+            display_name = (
+                    profile.fullname
+                    or user.number
+            )
 
             return Response(
                 {
-                    # "message": f"Welcome back {display_name}",
+                    "message": f"Welcome back {display_name}",
                     "is_new": False,
                     "account": {
                         "id": user.id,
@@ -192,12 +169,12 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
                         "email": user.email,
                         "is_active": user.is_active,
 
-                        # "profile": {
-                        #     "fullname": profile.fullname,
-                        #     "bio": profile.bio,
-                        #     "username": profile.username,
-                        #     "profile_pic": profile_pic_url
-                        # }
+                        "profile": {
+                            "fullname": profile.fullname,
+                            "age":profile.age,
+                            "address": profile.address,
+                            "profile_pic": profile_pic_url
+                        }
                     },
 
                     "tokens": {
@@ -210,16 +187,12 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
 
         user = User.objects.create(number=number)
 
-        # profile = Profile.objects.create(
-        #     account=account,
-        #     username=generate_unique_profile_username()
-        # )
 
         refresh = RefreshToken.for_user(user)
 
         return Response(
             {
-                "message": "OTP verified. Please complete registration.",
+                "message": "OTP verified.have your tokens:",
                 "is_new": True,
 
                 "account": {
@@ -234,6 +207,125 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK
         )
+
+class SetProfileViewSet(viewsets.ModelViewSet):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = CompleteProfileSerializer
+    queryset = Profile.objects.all()
+
+    def get_queryset(self):
+        return Profile.objects.filter(user=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+
+        profile, created = Profile.objects.get_or_create(
+            user=user
+                )
+
+        serializer = self.get_serializer(
+            profile,
+            data=request.data,
+            partial=True
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        profile = serializer.save()
+
+        return Response(
+            {
+                "message": (
+                    "Profile created"
+                    if created
+                    else "Profile updated"
+                ),
+
+                "user": {
+                    "id": user.id,
+                    "number": user.number,
+                    "email": user.email,
+                    "is_active":user.is_active,
+
+                    "profile": {
+                        "fullname": profile.fullname,
+                        "age": profile.age,
+                        "address": profile.address,
+
+                        "profile_pic": (
+                            profile.photo.url
+                            if profile.photo
+                            else None
+                        )
+                    }
+                }
+            },
+            status=status.HTTP_200_OK
+        )
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ReviewSerializer
+    queryset = Review.objects.all()
+
+    def get_queryset(self):
+        qs = Review.objects.filter(delete=False)
+
+        book_id = self.request.query_params.get('book')
+        if book_id:
+            qs = qs.filter(book_id=book_id)
+
+        return qs
+
+    def perform_create(self, serializer):
+        book_id = self.request.data.get("book")
+
+        if not book_id:
+            raise ValidationError({"book": "book id is required."})
+
+        try:
+            book = Book.objects.get(pk=book_id)
+        except Book.DoesNotExist:
+            raise ValidationError({"book": "book not found"})
+
+        serializer.save(
+            user=self.request.user,
+            book=book,
+        )
+
+    def update(self, request, *args, **kwargs):
+        review = self.get_object()
+
+        if review.user != request.user:
+            raise PermissionDenied("you can only edit your own review.")
+
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        review = self.get_object()
+
+        if review.user != request.user:
+            raise PermissionDenied("you can only edit your own review.")
+
+        return super().partial_update(request, *args, **kwargs)
+    def perform_destroy(self, instance):
+        instance.delete = True
+        instance.save(update_fields=['delete'])
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"detail": "review deleted successfully."},
+            status=status.HTTP_200_OK
+        )
+
+
+
+
+
 
 
 
