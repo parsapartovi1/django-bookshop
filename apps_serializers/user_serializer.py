@@ -101,7 +101,6 @@ class CompleteProfileSerializer(serializers.ModelSerializer):
 
 
 
-
 class ReviewSerializer(serializers.ModelSerializer):
     fullname = serializers.CharField(
         source="user.user_profile.fullname",
@@ -124,32 +123,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     def get_profile_pic(self, obj):
         profile = getattr(obj.user, "user_profile", None)
 
-        if not profile or not profile.profile_pic:
+        if not profile or not profile.photo:
             return None
 
         request = self.context.get("request")
-        url = profile.profile_pic.url
+        url = profile.photo.url
 
         if request:
             return request.build_absolute_uri(url)
 
         return url
-
-    def create(self, validated_data):
-        user = self.context["request"].user
-
-        return Review.objects.create(
-            user=user,
-            **validated_data
-        )
-
-    def update(self, instance, validated_data):
-        user = self.context["request"].user
-
-        if instance.user != user:
-            raise PermissionDenied(
-                "You do not have permission to edit this review."
-            )
-
-        return super().update(instance, validated_data)
-

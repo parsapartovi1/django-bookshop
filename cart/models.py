@@ -21,11 +21,13 @@ class Cart(models.Model):
     )
 
     order_status = models.CharField(
-        choices=ORDER_STATUS_CHOICES
+        max_length=30,
+        choices=ORDER_STATUS_CHOICES,
     )
 
     payment_status = models.CharField(
-        choices=PAYMENT_STATUS_CHOICES
+        max_length=30,
+        choices=PAYMENT_STATUS_CHOICES,
     )
 
     created_at = models.DateTimeField(

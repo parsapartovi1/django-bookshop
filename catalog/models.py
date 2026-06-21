@@ -50,10 +50,10 @@ class Author(models.Model):
     )
 
     class Meta:
-        verbose_name = '2.Author Name'
+        verbose_name = '2.Authors'
 
     def __str__(self):
-        return self.name + self.bio[0:10] or " " + "..."
+        return f"{self.name} {(self.bio or '')[:10]}..."
 
 class Discount(models.Model):
     amount = models.DecimalField(
@@ -83,6 +83,22 @@ class Discount(models.Model):
         return f"{self.amount} in {self.expiration}"
 
 
+
+class Genre(models.Model):
+    name = models.CharField(
+        max_length=100,
+        verbose_name='Category Name',
+        choices=GENRE_CHOICES,
+    )
+    class Meta:
+        verbose_name = '3.Category Name'
+
+    def __str__(self):
+        return self.name
+
+
+
+
 class Book(models.Model):
     name = models.CharField(
         max_length=100,
@@ -93,6 +109,12 @@ class Book(models.Model):
     description = models.TextField(
         verbose_name='Book Description',
         help_text='enter Books Description'
+    )
+
+    genres = models.ManyToManyField(
+        Genre,
+        related_name="books",
+        blank=True,
     )
 
     price = models.DecimalField(
@@ -142,18 +164,6 @@ class Book(models.Model):
     def __str__(self):
         return self.name + " " + self.description[0:10]+"..."
 
-
-class Genre(models.Model):
-    name = models.CharField(
-        max_length=100,
-        verbose_name='Category Name',
-        choices=GENRE_CHOICES,
-    )
-    class Meta:
-        verbose_name = '3.Category Name'
-
-    def __str__(self):
-        return self.name
 
 
 class OnlineBook(models.Model):
