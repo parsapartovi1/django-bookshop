@@ -1,7 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-
 from .views import (
     GenerateOTPViewSet,
     VerifyOTPViewSet,
@@ -17,5 +16,4 @@ router.register("api/review", ReviewViewSet, basename="review-act")
 
 urlpatterns = [
     path("", include(router.urls)),
-
 ]

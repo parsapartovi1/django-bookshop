@@ -1,0 +1,283 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+            کتابوک
+        {% endblock %}
+    </title>
+
+    <meta name="description" content="کتابوک - فروشگاه آنلاین کتاب">
+
+    <link rel="stylesheet" href="{% static 'catalog/css/main.css' %}">
+
+    {% block extra_head %}
+    {% endblock %}
+</head>
+
+<body data-theme="light">
+
+<!-- ================= SVG ICONS ================= -->
+<svg style="display: none;" aria-hidden="true">
+
+    <symbol id="icon-book" viewBox="0 0 24 24">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>
+    </symbol>
+
+    <symbol id="icon-category" viewBox="0 0 24 24">
+        <path d="M4 6h16"></path>
+        <path d="M4 12h16"></path>
+        <path d="M4 18h16"></path>
+    </symbol>
+
+    <symbol id="icon-online" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+        <path d="M8 20h8"></path>
+        <path d="M12 16v4"></path>
+    </symbol>
+
+    <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="M21 21l-4.3-4.3"></path>
+    </symbol>
+
+    <symbol id="icon-star" viewBox="0 0 24 24">
+        <path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21 7 14.2 2 9.3l6.9-1z"></path>
+    </symbol>
+
+    <symbol id="icon-wallet" viewBox="0 0 24 24">
+        <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12H5a2 2 0 0 1-2-2z"></path>
+        <path d="M17 12h4v4h-4a2 2 0 0 1 0-4z"></path>
+    </symbol>
+
+    <symbol id="icon-cart" viewBox="0 0 24 24">
+        <circle cx="9" cy="20" r="1.5"></circle>
+        <circle cx="18" cy="20" r="1.5"></circle>
+        <path d="M3 4h2l3 12h10l3-8H7"></path>
+    </symbol>
+
+    <symbol id="icon-user" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M4 21a8 8 0 0 1 16 0"></path>
+    </symbol>
+
+    <symbol id="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="M4.93 4.93l1.41 1.41"></path>
+        <path d="M17.66 17.66l1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="M4.93 19.07l1.41-1.41"></path>
+        <path d="M17.66 6.34l1.41-1.41"></path>
+    </symbol>
+
+    <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 14.5A8.5 8.5 0 0 1 9.5 3a7 7 0 1 0 11.5 11.5z"></path>
+    </symbol>
+
+    <symbol id="icon-instagram" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M17.5 6.5h.01"></path>
+    </symbol>
+
+    <symbol id="icon-twitter" viewBox="0 0 24 24">
+        <path d="M22 5.8c-.7.3-1.4.5-2.2.6.8-.5 1.3-1.2 1.6-2.1-.7.4-1.5.8-2.4.9A3.7 3.7 0 0 0 12.6 8c0 .3 0 .6.1.8A10.5 10.5 0 0 1 5 4.9a3.7 3.7 0 0 0 1.1 4.9c-.6 0-1.2-.2-1.7-.5v.1a3.7 3.7 0 0 0 3 3.6c-.3.1-.7.1-1 .1-.2 0-.5 0-.7-.1a3.7 3.7 0 0 0 3.5 2.6A7.5 7.5 0 0 1 4.6 17c-.3 0-.6 0-.9-.1A10.6 10.6 0 0 0 9.4 18.6c6.9 0 10.7-5.7 10.7-10.7v-.5c.7-.5 1.4-1.1 1.9-1.8z"></path>
+    </symbol>
+
+    <symbol id="icon-linkedin" viewBox="0 0 24 24">
+        <path d="M4 9h4v11H4z"></path>
+        <path d="M6 4a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"></path>
+        <path d="M11 9h4v1.7c.6-1 1.7-2 3.5-2 2.8 0 4.5 1.9 4.5 5.5V20h-4v-5.2c0-1.6-.6-2.5-1.9-2.5-1.4 0-2.1 1-2.1 2.5V20h-4z"></path>
+    </symbol>
+
+</svg>
+
+
+<div class="site-wrapper">
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="main-header">
+        <nav class="navbar">
+
+            <div class="navbar-brand">
+                <a href="/ketabook/" class="brand-link">
+                    <svg class="site-icon brand-svg">
+                        <use href="#icon-book"></use>
+                    </svg>
+                    <span class="brand-name">کتابوک</span>
+                </a>
+            </div>
+
+            <div class="navbar-item navbar-category">
+                <button type="button" class="nav-icon-button" id="category-button">
+                    <svg class="site-icon">
+                        <use href="#icon-category"></use>
+                    </svg>
+                    <span class="nav-text">دسته بندی</span>
+                </button>
+            </div>
+
+            <div class="navbar-item navbar-online-books">
+                <a href="/ketabook/online-books/" class="nav-link">
+                    <svg class="site-icon">
+                        <use href="#icon-online"></use>
+                    </svg>
+                    <span class="nav-text">کتاب آنلاین</span>
+                </a>
+            </div>
+
+            <div class="navbar-search">
+                <form id="navbar-search-form" class="search-form" action="/ketabook/search/" method="get">
+                    <input
+                        type="search"
+                        name="q"
+                        id="navbar-search-input"
+                        class="search-input"
+                        placeholder="جستجوی کتاب، نویسنده، ژانر..."
+                        autocomplete="off"
+                    >
+
+                    <button type="submit" class="search-button" aria-label="جستجو">
+                        <svg class="site-icon search-svg">
+                            <use href="#icon-search"></use>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <div class="navbar-item navbar-cart">
+                <a href="/ketabook/cart/" class="nav-link cart-link">
+                    <svg class="site-icon">
+                        <use href="#icon-cart"></use>
+                    </svg>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+            </div>
+
+            <div class="navbar-item navbar-theme">
+                <button type="button" class="nav-icon-button theme-toggle" id="theme-toggle" aria-label="تغییر حالت سایت">
+                    <svg class="site-icon" id="theme-icon">
+                        <use href="#icon-moon"></use>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="navbar-item navbar-profile">
+                <a href="/ketabook/profile/" class="nav-link profile-link" id="profile-link">
+                    <svg class="site-icon" id="profile-icon-svg">
+                        <use href="#icon-user"></use>
+                    </svg>
+                    <span class="nav-text" id="profile-text">وارد شوید</span>
+                </a>
+            </div>
+
+        </nav>
+    </header>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="main-footer">
+
+        <section class="footer-top">
+
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <svg class="site-icon footer-logo-icon">
+                        <use href="#icon-book"></use>
+                    </svg>
+                    <span class="footer-logo-text">کتابوک</span>
+                </div>
+
+                <p class="footer-description">
+                    کتابوک جایی برای پیدا کردن کتاب‌های جذاب، نسخه‌های آنلاین، تخفیف‌های ویژه و تجربه‌ای مدرن برای دوست‌داران کتاب است.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h3 class="footer-title">دسترسی سریع</h3>
+
+                <ul class="footer-list">
+                    <li><a href="/ketabook/">خانه</a></li>
+                    <li><a href="/ketabook/categories/">دسته بندی‌ها</a></li>
+                    <li><a href="/ketabook/discounts/">تخفیف خورده‌ها</a></li>
+                    <li><a href="/ketabook/online-books/">کتاب‌های آنلاین</a></li>
+                    <li><a href="/ketabook/cart/">سبد خرید</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-support">
+                <h3 class="footer-title">پشتیبانی</h3>
+
+                <ul class="footer-list">
+                    <li><a href="/ketabook/contact/">تماس با ما</a></li>
+                    <li><a href="/ketabook/about/">درباره کتابوک</a></li>
+                    <li><a href="/ketabook/rules/">قوانین و شرایط</a></li>
+                    <li><a href="/ketabook/faq/">سوالات متداول</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-social">
+                <h3 class="footer-title">ارتباط با کتابوک</h3>
+
+                <p class="footer-small-text">
+                    برای دیدن خبرها، تخفیف‌ها و معرفی کتاب‌های جدید ما را دنبال کنید.
+                </p>
+
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <svg class="site-icon">
+                            <use href="#icon-instagram"></use>
+                        </svg>
+                    </a>
+
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <svg class="site-icon">
+                            <use href="#icon-twitter"></use>
+                        </svg>
+                    </a>
+
+                    <a href="#" class="social-link" aria-label="LinkedIn">
+                        <svg class="site-icon">
+                            <use href="#icon-linkedin"></use>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="footer-bottom">
+            <p>
+                © تمام حقوق برای کتابوک محفوظ است.
+            </p>
+        </section>
+
+    </footer>
+
+</div>
+
+
+<script src="{% static 'catalog/js/main.js' %}"></script>
+
+{% block extra_scripts %}
+{% endblock %}
+
+</body>
+</html>

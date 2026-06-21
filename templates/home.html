@@ -1,0 +1,490 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    خانه | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'catalog/css/home.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="home-page" id="home-page">
+
+    <!-- ================= HERO BOOKSHELF ================= -->
+    <section class="hero-bookshelf-section">
+
+        <div class="section-heading hero-heading">
+            <h1 class="home-title">
+                کتابوک
+            </h1>
+
+            <p class="home-subtitle">
+                کتابخانه‌ای گرم، چوبی و زنده برای کشف کتاب‌های خاص
+            </p>
+        </div>
+
+        <div class="bookshelf-wrapper">
+
+            <div class="bookshelf-top"></div>
+
+            <div class="bookshelf" id="featured-bookshelf">
+
+                <article class="shelf-book featured-book" data-book-id="1">
+                    <div class="book-spine">
+                        <span class="book-spine-title">کتاب ویژه ۱</span>
+                    </div>
+
+                    <div class="book-hover-card">
+                        <h3 class="hover-book-title">نام کتاب ویژه</h3>
+                        <p class="hover-book-author">نویسنده: نام نویسنده</p>
+                        <p class="hover-book-reviews">تعداد نظرها: ۰</p>
+                        <p class="hover-book-description">
+                            توضیح کوتاه کتاب اینجا نمایش داده می‌شود...
+                        </p>
+                    </div>
+                </article>
+
+                <article class="shelf-book featured-book" data-book-id="2">
+                    <div class="book-spine">
+                        <span class="book-spine-title">کتاب ویژه ۲</span>
+                    </div>
+
+                    <div class="book-hover-card">
+                        <h3 class="hover-book-title">نام کتاب ویژه</h3>
+                        <p class="hover-book-author">نویسنده: نام نویسنده</p>
+                        <p class="hover-book-reviews">تعداد نظرها: ۰</p>
+                        <p class="hover-book-description">
+                            توضیح کوتاه کتاب اینجا نمایش داده می‌شود...
+                        </p>
+                    </div>
+                </article>
+
+                <article class="shelf-book featured-book" data-book-id="3">
+                    <div class="book-spine">
+                        <span class="book-spine-title">کتاب ویژه ۳</span>
+                    </div>
+
+                    <div class="book-hover-card">
+                        <h3 class="hover-book-title">نام کتاب ویژه</h3>
+                        <p class="hover-book-author">نویسنده: نام نویسنده</p>
+                        <p class="hover-book-reviews">تعداد نظرها: ۰</p>
+                        <p class="hover-book-description">
+                            توضیح کوتاه کتاب اینجا نمایش داده می‌شود...
+                        </p>
+                    </div>
+                </article>
+
+                <article class="shelf-book featured-book" data-book-id="4">
+                    <div class="book-spine">
+                        <span class="book-spine-title">کتاب ویژه ۴</span>
+                    </div>
+
+                    <div class="book-hover-card">
+                        <h3 class="hover-book-title">نام کتاب ویژه</h3>
+                        <p class="hover-book-author">نویسنده: نام نویسنده</p>
+                        <p class="hover-book-reviews">تعداد نظرها: ۰</p>
+                        <p class="hover-book-description">
+                            توضیح کوتاه کتاب اینجا نمایش داده می‌شود...
+                        </p>
+                    </div>
+                </article>
+
+                <article class="shelf-book featured-book" data-book-id="5">
+                    <div class="book-spine">
+                        <span class="book-spine-title">کتاب ویژه ۵</span>
+                    </div>
+
+                    <div class="book-hover-card">
+                        <h3 class="hover-book-title">نام کتاب ویژه</h3>
+                        <p class="hover-book-author">نویسنده: نام نویسنده</p>
+                        <p class="hover-book-reviews">تعداد نظرها: ۰</p>
+                        <p class="hover-book-description">
+                            توضیح کوتاه کتاب اینجا نمایش داده می‌شود...
+                        </p>
+                    </div>
+                </article>
+
+                <article class="shelf-book featured-book" data-book-id="6">
+                    <div class="book-spine">
+                        <span class="book-spine-title">کتاب ویژه ۶</span>
+                    </div>
+
+                    <div class="book-hover-card">
+                        <h3 class="hover-book-title">نام کتاب ویژه</h3>
+                        <p class="hover-book-author">نویسنده: نام نویسنده</p>
+                        <p class="hover-book-reviews">تعداد نظرها: ۰</p>
+                        <p class="hover-book-description">
+                            توضیح کوتاه کتاب اینجا نمایش داده می‌شود...
+                        </p>
+                    </div>
+                </article>
+
+            </div>
+
+            <div class="bookshelf-bottom"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= DISCOUNTED BOOKS ================= -->
+    <section
+        class="book-row-section discounted-books-section"
+        id="discounted-books-section"
+        data-api-url="/catalog/api/books/"
+    >
+
+        <div class="section-row-header">
+            <h2 class="section-title">
+                تخفیف خورده‌ها
+            </h2>
+
+            <a href="/ketabook/discounts/" class="section-more-link">
+                مشاهده همه
+                <span class="section-more-icon">&lt;</span>
+            </a>
+        </div>
+
+        <div class="book-row-scroll" id="discounted-books-row">
+
+            <article class="book-card book-card-placeholder">
+                <div class="book-card-image-wrapper">
+                    <div class="book-card-image empty-book-image"></div>
+                </div>
+
+                <div class="book-card-body">
+                    <h3 class="book-card-title">نام کتاب</h3>
+                    <p class="book-card-author">نام نویسنده</p>
+
+                    <div class="book-card-prices">
+                        <span class="book-card-price old-price">۰ تومان</span>
+                        <span class="book-card-price discounted-price">۰ تومان</span>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= GENRE: CRIME ================= -->
+    <section
+        class="book-row-section genre-section"
+        id="genre-crime-section"
+        data-genre-name="جنایی"
+        data-api-url="/catalog/api/books/?genre=crime"
+    >
+
+        <div class="section-row-header">
+            <h2 class="section-title">
+                جنایی
+            </h2>
+
+            <a href="/ketabook/genres/crime/" class="section-more-link">
+                مشاهده همه
+                <span class="section-more-icon">&lt;</span>
+            </a>
+        </div>
+
+        <div class="book-row-scroll">
+
+            <article class="book-card">
+                <a href="/ketabook/books/1/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <article class="book-card">
+                <a href="/ketabook/books/2/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <article class="book-card">
+                <a href="/ketabook/books/3/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <a href="/ketabook/genres/crime/" class="genre-end-button">
+                &lt;
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= GENRE: NOVEL ================= -->
+    <section
+        class="book-row-section genre-section"
+        id="genre-novel-section"
+        data-genre-name="رمان"
+        data-api-url="/catalog/api/books/?genre=novel"
+    >
+
+        <div class="section-row-header">
+            <h2 class="section-title">
+                رمان
+            </h2>
+
+            <a href="/ketabook/genres/novel/" class="section-more-link">
+                مشاهده همه
+                <span class="section-more-icon">&lt;</span>
+            </a>
+        </div>
+
+        <div class="book-row-scroll">
+
+            <article class="book-card">
+                <a href="/ketabook/books/1/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <article class="book-card">
+                <a href="/ketabook/books/2/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <article class="book-card">
+                <a href="/ketabook/books/3/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <a href="/ketabook/genres/novel/" class="genre-end-button">
+                &lt;
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= GENRE: PSYCHOLOGY ================= -->
+    <section
+        class="book-row-section genre-section"
+        id="genre-psychology-section"
+        data-genre-name="روانشناسی"
+        data-api-url="/catalog/api/books/?genre=psychology"
+    >
+
+        <div class="section-row-header">
+            <h2 class="section-title">
+                روانشناسی
+            </h2>
+
+            <a href="/ketabook/genres/psychology/" class="section-more-link">
+                مشاهده همه
+                <span class="section-more-icon">&lt;</span>
+            </a>
+        </div>
+
+        <div class="book-row-scroll">
+
+            <article class="book-card">
+                <a href="/ketabook/books/1/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <article class="book-card">
+                <a href="/ketabook/books/2/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <article class="book-card">
+                <a href="/ketabook/books/3/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">۰ تومان</p>
+                    </div>
+                </a>
+            </article>
+
+            <a href="/ketabook/genres/psychology/" class="genre-end-button">
+                &lt;
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ONLINE BOOKS PREVIEW ================= -->
+    <section
+        class="book-row-section online-books-preview-section"
+        id="online-books-preview-section"
+        data-api-url="/catalog/api/online-books/"
+    >
+
+        <div class="section-row-header">
+            <h2 class="section-title">
+                کتاب‌های آنلاین
+            </h2>
+
+            <a href="/ketabook/online-books/" class="section-more-link">
+                مشاهده همه
+                <span class="section-more-icon">&lt;</span>
+            </a>
+        </div>
+
+        <div class="book-row-scroll" id="online-books-row">
+
+            <article class="book-card online-book-card">
+                <a href="/ketabook/online-books/1/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب آنلاین</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">مشاهده آنلاین</p>
+                    </div>
+                </a>
+            </article>
+
+            <article class="book-card online-book-card">
+                <a href="/ketabook/online-books/2/" class="book-card-link">
+                    <div class="book-card-image-wrapper">
+                        <div class="book-card-image empty-book-image"></div>
+                    </div>
+
+                    <div class="book-card-body">
+                        <h3 class="book-card-title">نام کتاب آنلاین</h3>
+                        <p class="book-card-author">نام نویسنده</p>
+                        <p class="book-card-price">مشاهده آنلاین</p>
+                    </div>
+                </a>
+            </article>
+
+            <a href="/ketabook/online-books/" class="genre-end-button">
+                &lt;
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= BOOK CARD TEMPLATE FOR JS ================= -->
+    <template id="book-card-template">
+        <article class="book-card">
+            <a href="#" class="book-card-link">
+                <div class="book-card-image-wrapper">
+                    <img src="" alt="تصویر کتاب" class="book-card-image">
+                </div>
+
+                <div class="book-card-body">
+                    <h3 class="book-card-title"></h3>
+                    <p class="book-card-author"></p>
+                    <p class="book-card-price"></p>
+                </div>
+            </a>
+        </article>
+    </template>
+
+
+    <!-- ================= FEATURED SHELF BOOK TEMPLATE FOR JS ================= -->
+    <template id="featured-shelf-book-template">
+        <article class="shelf-book featured-book">
+            <div class="book-spine">
+                <span class="book-spine-title"></span>
+            </div>
+
+            <div class="book-hover-card">
+                <h3 class="hover-book-title"></h3>
+                <p class="hover-book-author"></p>
+                <p class="hover-book-reviews"></p>
+                <p class="hover-book-description"></p>
+            </div>
+        </article>
+    </template>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_scripts %}
+    <script src="{% static 'catalog/js/home.js' %}"></script>
+{% endblock %}

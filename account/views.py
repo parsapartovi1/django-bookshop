@@ -163,7 +163,7 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
                 {
                     "message": f"Welcome back {display_name}",
                     "is_new": False,
-                    "account": {
+                    "catalog": {
                         "id": user.id,
                         "number": user.number,
                         "email": user.email,
@@ -195,7 +195,7 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
                 "message": "OTP verified.have your tokens:",
                 "is_new": True,
 
-                "account": {
+                "catalog": {
                     "id": user.id,
                     "number": user.number
                 },
@@ -271,13 +271,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
 
     def get_queryset(self):
-        qs = Review.objects.filter(delete=False)
+        qs = Review.objects.all()
 
-        book_id = self.request.query_params.get('book')
+        book_id = self.request.query_params.get("book")
+
         if book_id:
             qs = qs.filter(book_id=book_id)
 
-        return qs
+        return qs.order_by("-created_at")
 
     def perform_create(self, serializer):
         book_id = self.request.data.get("book")
@@ -310,18 +311,19 @@ class ReviewViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("you can only edit your own review.")
 
         return super().partial_update(request, *args, **kwargs)
-    def perform_destroy(self, instance):
-        instance.delete = True
-        instance.save(update_fields=['delete'])
 
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        self.perform_destroy(instance)
+        review = self.get_object()
+
+        if review.user != request.user:
+            raise PermissionDenied("you can only delete your own review.")
+
+        review.delete()
+
         return Response(
             {"detail": "review deleted successfully."},
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
-
 
 
 

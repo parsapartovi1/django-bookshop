@@ -133,7 +133,9 @@ class Book(models.Model):
         verbose_name='Book Image',
         help_text='enter Books Image',
         validators=[FileExtensionValidator(['jpg', 'png'])],
+        upload_to="book_photos"
     )
+
 
     level = models.CharField(
         verbose_name='Book Level',
