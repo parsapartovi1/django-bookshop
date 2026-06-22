@@ -1,0 +1,167 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به کتابوک</title>
+
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <link rel="stylesheet" href="{% static 'account/css/login.css' %}?v=10">
+    <script src="{% static 'account/js/login.js' %}?v=10" defer></script>
+</head>
+
+<body>
+<main
+    id="loginPage"
+    class="login-page"
+    data-send-otp-url="/account/api/send-otp/"
+    data-verify-otp-url="/account/api/verify-otp/"
+    data-set-profile-url="/account/set-profile/"
+    data-home-url="/ketabook/"
+>
+
+    <!-- LEFT SIDE: floating book + modern phone -->
+    <section class="preview-scene" aria-hidden="true">
+        <div class="scene-stage">
+
+            <div class="book-preview">
+                <div class="book-shadow"></div>
+
+                <div class="book-object">
+
+                    <div class="book-cover cover-left"></div>
+                    <div class="book-cover cover-right"></div>
+
+                    <div class="book-pages">
+                        <div class="page-stack page-stack-left"></div>
+                        <div class="page-stack page-stack-right"></div>
+
+                        <div class="turn-page turn-page-one"></div>
+                        <div class="turn-page turn-page-two"></div>
+                        <div class="turn-page turn-page-three"></div>
+                    </div>
+
+                    <div class="book-spine"></div>
+
+                    <div class="glitter-field">
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="phone-preview">
+                <div class="phone-shadow"></div>
+
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <div class="dynamic-island"></div>
+
+                        <div class="phone-glow"></div>
+
+                        <div class="otp-notification">
+                            <strong>کد تایید</strong>
+                            <span id="phoneOtpPreview">••••••</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- RIGHT SIDE: auth card -->
+    <section class="auth-wrapper">
+        <div class="auth-card">
+
+            <div class="brand">
+                <a href="/ketabook/" class="brand-logo" aria-label="کتابوک">ک</a>
+                <h1>کتابوک</h1>
+                <p id="screenSubtitle">ورود با شماره موبایل</p>
+            </div>
+
+            <div id="numberScreen" class="screen active">
+                <form id="numberForm" novalidate>
+                    {% csrf_token %}
+
+                    <div class="input-group">
+                        <label for="numberInput">شماره موبایل</label>
+
+                        <div class="phone-input-shell">
+                            <span dir="ltr">+98</span>
+                            <input
+                                id="numberInput"
+                                type="tel"
+                                inputmode="numeric"
+                                placeholder="09123456789"
+                                autocomplete="tel"
+                                maxlength="11"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <button id="sendOtpBtn" type="submit">
+                        دریافت کد تایید
+                    </button>
+                </form>
+            </div>
+
+            <div id="otpScreen" class="screen">
+                <div class="otp-header">
+                    <h2>کد تایید را وارد کنید</h2>
+                    <p>
+                        کد ۶ رقمی برای
+                        <strong id="numberPreview" dir="ltr"></strong>
+                        ارسال شد.
+                    </p>
+                </div>
+
+                <form id="otpForm" novalidate>
+                    {% csrf_token %}
+
+                    <div class="otp-boxes" dir="ltr">
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 1">
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 2">
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 3">
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 4">
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 5">
+                        <input class="otp-box" type="text" inputmode="numeric" maxlength="1" aria-label="OTP digit 6">
+                    </div>
+
+                    <input id="otpInput" type="hidden">
+
+                    <button id="verifyOtpBtn" type="submit">
+                        تایید و ادامه
+                    </button>
+                </form>
+
+                <div class="otp-tools">
+                    <button id="changeNumberBtn" type="button">
+                        تغییر شماره
+                    </button>
+
+                    <button id="resendOtpBtn" type="button" disabled>
+                        ارسال دوباره
+                    </button>
+                </div>
+
+                <p id="otpTimer" class="otp-timer">
+                    اعتبار کد: 02:00
+                </p>
+            </div>
+
+            <div id="messageBox" class="message-box"></div>
+
+        </div>
+    </section>
+
+</main>
+</body>
+</html>

@@ -3,7 +3,7 @@ import random
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 import os
 import redis
@@ -116,7 +116,6 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
     queryset = User.objects.none()
 
     def create(self, request, *args, **kwargs):
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -139,65 +138,60 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
 
         redis_client.delete(f"otp:{number}")
 
+        user, is_new = User.objects.get_or_create(number=number)
+        profile, _ = Profile.objects.get_or_create(user=user)
 
-        if User.objects.filter(number=number).exists():
+        refresh = RefreshToken.for_user(user)
 
-            user = User.objects.get(number=number)
-            profile, _ = Profile.objects.get_or_create(user=user)
+        profile_pic_url = None
 
-            refresh = RefreshToken.for_user(user)
+        if profile.photo and profile.photo.name:
+            photo_name = str(profile.photo.name)
 
-            profile_pic_url = None
-            if profile.photo and profile.photo.name:
+            if not (
+                photo_name == "default.jpg"
+                or photo_name.endswith("/default.jpg")
+                or "profile_photos/default" in photo_name
+            ):
                 try:
                     profile_pic_url = profile.photo.url
                 except ValueError:
                     profile_pic_url = None
 
-            display_name = (
-                    profile.fullname
-                    or user.number
-            )
+        profile_completed = bool(
+            profile.fullname
+            or user.email
+            or profile.age
+            or profile.address
+            or profile_pic_url
+        )
 
-            return Response(
-                {
-                    "message": f"Welcome back {display_name}",
-                    "is_new": False,
-                    "catalog": {
-                        "id": user.id,
-                        "number": user.number,
-                        "email": user.email,
-                        "is_active": user.is_active,
-
-                        "profile": {
-                            "fullname": profile.fullname,
-                            "age":profile.age,
-                            "address": profile.address,
-                            "profile_pic": profile_pic_url
-                        }
-                    },
-
-                    "tokens": {
-                        "refresh": str(refresh),
-                        "access": str(refresh.access_token)
-                    }
-                },
-                status=status.HTTP_200_OK
-            )
-
-        user = User.objects.create(number=number)
-
-
-        refresh = RefreshToken.for_user(user)
+        display_name = profile.fullname or user.number
 
         return Response(
             {
-                "message": "OTP verified.have your tokens:",
-                "is_new": True,
+                "message": (
+                    "OTP verified.have your tokens:"
+                    if is_new
+                    else f"Welcome back {display_name}"
+                ),
+
+                "is_new": is_new,
+                "profile_completed": profile_completed,
 
                 "catalog": {
                     "id": user.id,
-                    "number": user.number
+                    "number": user.number,
+                    "email": user.email,
+                    "is_active": user.is_active,
+                    "profile_completed": profile_completed,
+
+                    "profile": {
+                        "fullname": profile.fullname,
+                        "age": profile.age,
+                        "address": profile.address,
+                        "profile_pic": profile_pic_url,
+                    }
                 },
 
                 "tokens": {
@@ -208,31 +202,118 @@ class VerifyOTPViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-class SetProfileViewSet(viewsets.ModelViewSet):
 
+class SetProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = CompleteProfileSerializer
     queryset = Profile.objects.all()
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
         return Profile.objects.filter(user=self.request.user)
 
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        profile, _ = Profile.objects.get_or_create(user=user)
+
+        profile_pic_url = None
+
+        if profile.photo and profile.photo.name:
+            photo_name = str(profile.photo.name)
+
+            if not (
+                photo_name == "default.jpg"
+                or photo_name.endswith("/default.jpg")
+                or "profile_photos/default" in photo_name
+            ):
+                try:
+                    profile_pic_url = profile.photo.url
+                except ValueError:
+                    profile_pic_url = None
+
+        profile_completed = bool(
+            profile.fullname
+            or user.email
+            or profile.age
+            or profile.address
+            or profile_pic_url
+        )
+
+        return Response(
+            {
+                "profile_completed": profile_completed,
+
+                "user": {
+                    "id": user.id,
+                    "number": user.number,
+                    "email": user.email,
+                    "is_active": user.is_active,
+                    "profile_completed": profile_completed,
+
+                    "profile": {
+                        "fullname": profile.fullname,
+                        "age": profile.age,
+                        "address": profile.address,
+                        "profile_pic": profile_pic_url,
+                    }
+                }
+            },
+            status=status.HTTP_200_OK
+        )
+
     def create(self, request, *args, **kwargs):
         user = request.user
+        profile, created = Profile.objects.get_or_create(user=user)
 
-        profile, created = Profile.objects.get_or_create(
-            user=user
-                )
+        data = request.data.copy()
+
+        email = data.get("email")
+
+        if "email" in data:
+            data.pop("email", None)
+
+        if email is not None:
+            user.email = email.strip()
+            user.save(update_fields=["email"])
+
+        if not request.FILES.get("photo"):
+            data.pop("photo", None)
+
+        if data.get("age") in ["", None]:
+            data.pop("age", None)
 
         serializer = self.get_serializer(
             profile,
-            data=request.data,
+            data=data,
             partial=True
         )
 
         serializer.is_valid(raise_exception=True)
 
         profile = serializer.save()
+
+        profile_pic_url = None
+
+        if profile.photo and profile.photo.name:
+            photo_name = str(profile.photo.name)
+
+            if not (
+                photo_name == "default.jpg"
+                or photo_name.endswith("/default.jpg")
+                or "profile_photos/default" in photo_name
+            ):
+                try:
+                    profile_pic_url = profile.photo.url
+                except ValueError:
+                    profile_pic_url = None
+
+        profile_completed = bool(
+            profile.fullname
+            or user.email
+            or profile.age
+            or profile.address
+            or profile_pic_url
+        )
 
         return Response(
             {
@@ -242,27 +323,31 @@ class SetProfileViewSet(viewsets.ModelViewSet):
                     else "Profile updated"
                 ),
 
+                "profile_completed": profile_completed,
+
                 "user": {
                     "id": user.id,
                     "number": user.number,
                     "email": user.email,
-                    "is_active":user.is_active,
+                    "is_active": user.is_active,
+                    "profile_completed": profile_completed,
 
                     "profile": {
                         "fullname": profile.fullname,
                         "age": profile.age,
                         "address": profile.address,
-
-                        "profile_pic": (
-                            profile.photo.url
-                            if profile.photo
-                            else None
-                        )
+                        "profile_pic": profile_pic_url,
                     }
                 }
             },
             status=status.HTTP_200_OK
         )
+
+    def update(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

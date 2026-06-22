@@ -15,7 +15,7 @@
 
     <meta name="description" content="کتابوک - فروشگاه آنلاین کتاب">
 
-    <link rel="stylesheet" href="{% static 'catalog/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'catalog/css/main.css' %}?v=4">
 
     {% block extra_head %}
     {% endblock %}
@@ -119,7 +119,12 @@
             </div>
 
             <div class="navbar-item navbar-category">
-                <button type="button" class="nav-icon-button" id="category-button">
+                <button
+                    type="button"
+                    class="nav-icon-button"
+                    id="category-button"
+                    aria-expanded="false"
+                >
                     <svg class="site-icon">
                         <use href="#icon-category"></use>
                     </svg>
@@ -137,7 +142,12 @@
             </div>
 
             <div class="navbar-search">
-                <form id="navbar-search-form" class="search-form" action="/ketabook/search/" method="get">
+                <form
+                    id="navbar-search-form"
+                    class="search-form"
+                    action="/ketabook/search/"
+                    method="get"
+                >
                     <input
                         type="search"
                         name="q"
@@ -156,16 +166,32 @@
             </div>
 
             <div class="navbar-item navbar-cart">
-                <a href="/ketabook/cart/" class="nav-link cart-link">
+                <a
+                    href="/ketabook/cart/"
+                    class="nav-link cart-link"
+                    id="cart-link"
+                    aria-label="سبد خرید"
+                >
                     <svg class="site-icon">
                         <use href="#icon-cart"></use>
                     </svg>
-                    <span class="cart-count" id="cart-count">0</span>
+
+                    <span class="nav-text">سبد خرید</span>
+
+                    <span class="cart-count" id="cart-count" hidden>
+                        0
+                    </span>
                 </a>
             </div>
 
             <div class="navbar-item navbar-theme">
-                <button type="button" class="nav-icon-button theme-toggle" id="theme-toggle" aria-label="تغییر حالت سایت">
+                <button
+                    type="button"
+                    class="nav-icon-button theme-toggle"
+                    id="theme-toggle"
+                    aria-label="تغییر حالت سایت"
+                    title="حالت تاریک"
+                >
                     <svg class="site-icon" id="theme-icon">
                         <use href="#icon-moon"></use>
                     </svg>
@@ -173,7 +199,11 @@
             </div>
 
             <div class="navbar-item navbar-profile">
-                <a href="/ketabook/profile/" class="nav-link profile-link" id="profile-link">
+                <a
+                    href="/account/login/"
+                    class="nav-link profile-link"
+                    id="profile-link"
+                >
                     <svg class="site-icon" id="profile-icon-svg">
                         <use href="#icon-user"></use>
                     </svg>
@@ -274,7 +304,7 @@
 </div>
 
 
-<script src="{% static 'catalog/js/main.js' %}"></script>
+<script src="{% static 'catalog/js/main.js' %}?v=5" defer></script>
 
 {% block extra_scripts %}
 {% endblock %}

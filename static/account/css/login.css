@@ -1,0 +1,853 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Vazirmatn,
+        Tahoma,
+        Arial,
+        sans-serif;
+}
+
+:root {
+    color-scheme: light;
+
+    --bg-main: #ffffff;
+    --bg-soft: #f7f2ed;
+
+    --card-bg: rgba(255, 255, 255, 0.82);
+    --card-border: rgba(38, 24, 14, 0.12);
+
+    --text-main: #20160f;
+    --text-soft: rgba(32, 22, 15, 0.64);
+    --text-faint: rgba(32, 22, 15, 0.42);
+
+    --orange: #c45500;
+    --orange-2: #e66500;
+    --orange-3: #ff7a18;
+    --orange-light: #ffb06a;
+    --orange-soft: rgba(230, 101, 0, 0.14);
+
+    --danger: #e84d5b;
+    --success: #21b96f;
+
+    --phone-black: #050506;
+    --phone-metal: #242428;
+    --phone-border: #4a4a50;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--text-main);
+    background: #ffffff;
+    overflow-x: hidden;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+
+/* =========================================================
+   PAGE LAYOUT
+========================================================= */
+
+.login-page {
+    width: min(1180px, 100%);
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 42px 30px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 420px;
+    align-items: center;
+    gap: 88px;
+    direction: ltr;
+    background: #ffffff;
+}
+
+/* =========================================================
+   LEFT PREVIEW AREA
+========================================================= */
+
+.preview-scene {
+    position: relative;
+    min-height: 680px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+/* phone back light */
+.preview-scene::before {
+    content: "";
+    position: absolute;
+    left: 47%;
+    top: 49%;
+    width: 520px;
+    height: 520px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, rgba(255, 122, 24, 0.26), rgba(255, 122, 24, 0.1) 34%, transparent 68%);
+    filter: blur(18px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* softer outer glow */
+.preview-scene::after {
+    content: "";
+    position: absolute;
+    left: 47%;
+    top: 51%;
+    width: 680px;
+    height: 360px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, rgba(196, 85, 0, 0.12), transparent 70%);
+    filter: blur(26px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.scene-stage {
+    position: relative;
+    width: 620px;
+    height: 680px;
+    z-index: 1;
+}
+
+/* =========================================================
+   DELETE / HIDE ALL BOOK PARTS
+========================================================= */
+
+.book-preview,
+.book-object,
+.book-shadow,
+.book-cover,
+.cover-left,
+.cover-right,
+.book-pages,
+.page-stack,
+.turn-page,
+.book-spine,
+.glitter-field {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    animation: none !important;
+}
+
+/* =========================================================
+   BIG PHONE - MIDDLE LEFT
+========================================================= */
+
+.phone-preview {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 315px;
+    height: 650px;
+    transform: translate(-50%, -50%);
+    animation: phoneFloat 4.8s ease-in-out infinite;
+    z-index: 3;
+}
+
+/* phone shadow */
+.phone-shadow {
+    position: absolute;
+    left: 11%;
+    right: 11%;
+    bottom: -38px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.22);
+    filter: blur(22px);
+    z-index: 0;
+}
+
+/* iPhone-like frame */
+.phone-frame {
+    position: absolute;
+    inset: 0;
+    padding: 12px;
+    border-radius: 68px;
+    background:
+        linear-gradient(#111116, #111116) padding-box,
+        linear-gradient(145deg, #77777f, #202025 42%, #050506) border-box;
+    border: 3px solid transparent;
+    box-shadow:
+        0 42px 110px rgba(0, 0, 0, 0.34),
+        0 0 90px rgba(255, 122, 24, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.13);
+    z-index: 2;
+}
+
+/* small metallic highlight */
+.phone-frame::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 62px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+}
+
+/* screen */
+.phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 55px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.06), transparent 28%),
+        radial-gradient(circle at 50% 80%, rgba(255, 122, 24, 0.05), transparent 36%),
+        #020203;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 0 34px rgba(0, 0, 0, 0.92);
+}
+
+/* dynamic island */
+.dynamic-island {
+    position: absolute;
+    left: 50%;
+    top: 19px;
+    width: 106px;
+    height: 31px;
+    transform: translateX(-50%);
+    border-radius: 999px;
+    background: #000000;
+    z-index: 6;
+    box-shadow:
+        inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+        0 1px 2px rgba(255, 255, 255, 0.04);
+}
+
+/* screen white glow during OTP */
+.phone-glow {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background:
+        radial-gradient(circle at 50% 34%, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.58), transparent 72%);
+    transition: opacity 0.25s ease;
+    z-index: 2;
+}
+
+/* OTP notification inside phone */
+.otp-notification {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 155px;
+    padding: 18px 14px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #171717;
+    text-align: center;
+    box-shadow:
+        0 20px 44px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    z-index: 5;
+}
+
+.otp-notification strong,
+.otp-notification span {
+    display: block;
+}
+
+.otp-notification strong {
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-weight: 900;
+}
+
+.otp-notification span {
+    font-size: 25px;
+    font-weight: 950;
+    letter-spacing: 8px;
+}
+
+/* OTP receiving animation */
+body.otp-receiving .phone-preview {
+    animation: phoneVibrate 850ms ease-in-out 1 !important;
+}
+
+body.otp-receiving .phone-screen {
+    background: #ffffff;
+    box-shadow:
+        0 0 58px rgba(255, 255, 255, 0.58),
+        0 0 95px rgba(255, 122, 24, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.92);
+}
+
+body.otp-receiving .phone-glow {
+    opacity: 1;
+}
+
+body.otp-receiving .otp-notification {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* signal lines around phone */
+body.otp-receiving .preview-scene .scene-stage::before,
+body.otp-receiving .preview-scene .scene-stage::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 34px;
+    height: 100px;
+    opacity: 0;
+    border: 2px solid rgba(196, 85, 0, 0.28);
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: 50%;
+    animation: signalLines 850ms ease 1;
+    z-index: 4;
+}
+
+body.otp-receiving .preview-scene .scene-stage::before {
+    left: 118px;
+}
+
+body.otp-receiving .preview-scene .scene-stage::after {
+    right: 118px;
+}
+
+/* =========================================================
+   RIGHT AUTH CARD
+========================================================= */
+
+.auth-wrapper {
+    width: 100%;
+    direction: rtl;
+}
+
+.auth-card {
+    width: 100%;
+    padding: 36px;
+    border-radius: 34px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow:
+        0 35px 90px rgba(0, 0, 0, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* brand */
+.brand {
+    text-align: center;
+    margin-bottom: 34px;
+}
+
+.brand-logo {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 18px;
+    display: grid;
+    place-items: center;
+    border-radius: 26px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 30px;
+    font-weight: 950;
+    background: linear-gradient(145deg, var(--orange-3), var(--orange), #8f3900);
+    box-shadow:
+        0 18px 42px rgba(196, 85, 0, 0.28),
+        0 0 36px rgba(255, 122, 24, 0.2);
+}
+
+.brand h1 {
+    font-size: 36px;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+.brand p {
+    color: var(--text-soft);
+    font-size: 15px;
+}
+
+/* screens */
+.screen {
+    display: none;
+    animation: fadeUp 0.35s ease forwards;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* =========================================================
+   NUMBER FORM
+========================================================= */
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 9px;
+    font-weight: 750;
+}
+
+/* IMPORTANT:
+   direction ltr keeps +98 on LEFT side */
+.phone-input-shell {
+    height: 56px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 18px;
+    border: 1px solid var(--card-border);
+    background: rgba(255, 255, 255, 0.9);
+    direction: ltr;
+}
+
+.phone-input-shell span {
+    order: 0;
+    min-width: 78px;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    direction: ltr;
+    color: var(--orange);
+    font-weight: 950;
+    border-right: 1px solid var(--card-border);
+    background: rgba(196, 85, 0, 0.08);
+}
+
+.phone-input-shell input {
+    order: 1;
+    width: 100%;
+    height: 100%;
+    padding: 0 16px;
+    border: 0;
+    outline: 0;
+    direction: ltr;
+    text-align: left;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 16px;
+    font-weight: 850;
+    letter-spacing: 0.05em;
+}
+
+.phone-input-shell input::placeholder {
+    color: var(--text-faint);
+}
+
+.phone-input-shell:focus-within {
+    border-color: rgba(196, 85, 0, 0.56);
+    box-shadow:
+        0 0 0 4px rgba(196, 85, 0, 0.1),
+        0 16px 32px rgba(196, 85, 0, 0.08);
+}
+
+/* primary buttons */
+#sendOtpBtn,
+#verifyOtpBtn {
+    width: 100%;
+    height: 56px;
+    border-radius: 18px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 950;
+    background: linear-gradient(135deg, var(--orange-3), var(--orange), #923b00);
+    box-shadow:
+        0 18px 36px rgba(196, 85, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+#sendOtpBtn:hover:not(:disabled),
+#verifyOtpBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+    box-shadow:
+        0 22px 42px rgba(196, 85, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* =========================================================
+   OTP
+========================================================= */
+
+.otp-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.otp-header h2 {
+    font-size: 29px;
+    margin-bottom: 9px;
+    color: var(--text-main);
+}
+
+.otp-header p {
+    color: var(--text-soft);
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.otp-header strong {
+    color: var(--text-main);
+}
+
+.otp-boxes {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.otp-box {
+    width: 100%;
+    height: 56px;
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    outline: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-main);
+    text-align: center;
+    font-size: 24px;
+    font-weight: 950;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.otp-box:focus {
+    border-color: rgba(196, 85, 0, 0.62);
+    box-shadow: 0 0 0 4px rgba(196, 85, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.otp-box.filled {
+    color: #ffffff;
+    background: linear-gradient(145deg, var(--orange-3), var(--orange));
+    border-color: transparent;
+}
+
+/* OTP tools */
+.otp-tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.otp-tools button {
+    width: 100%;
+    height: 48px;
+    border-radius: 16px;
+    color: var(--text-main);
+    font-weight: 850;
+    background: rgba(196, 85, 0, 0.07);
+    border: 1px solid rgba(196, 85, 0, 0.15);
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.otp-tools button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: rgba(196, 85, 0, 0.11);
+    border-color: rgba(196, 85, 0, 0.28);
+}
+
+.otp-timer {
+    margin-top: 18px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-soft);
+}
+
+/* =========================================================
+   MESSAGE BOX
+========================================================= */
+
+.message-box {
+    display: none;
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.message-box.success,
+.message-box.error {
+    display: block;
+}
+
+.message-box.success {
+    color: #0d8d4d;
+    background: rgba(34, 199, 114, 0.1);
+    border: 1px solid rgba(34, 199, 114, 0.24);
+}
+
+.message-box.error {
+    color: #c83042;
+    background: rgba(232, 77, 91, 0.1);
+    border: 1px solid rgba(232, 77, 91, 0.24);
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes phoneFloat {
+    0%, 100% {
+        transform: translate(-50%, -50%) translateY(0) rotate(1.2deg);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) translateY(-18px) rotate(-1.2deg);
+    }
+}
+
+@keyframes phoneVibrate {
+    0%, 100% {
+        transform: translate(-50%, -50%) translateX(0) rotate(1.2deg);
+    }
+
+    20% {
+        transform: translate(-50%, -50%) translateX(-5px) rotate(0.7deg);
+    }
+
+    40% {
+        transform: translate(-50%, -50%) translateX(5px) rotate(1.8deg);
+    }
+
+    60% {
+        transform: translate(-50%, -50%) translateX(-4px) rotate(0.9deg);
+    }
+
+    80% {
+        transform: translate(-50%, -50%) translateX(4px) rotate(1.6deg);
+    }
+}
+
+@keyframes signalLines {
+    0% {
+        opacity: 0;
+        transform: scale(0.82);
+    }
+
+    25% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.18);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1040px) {
+    .login-page {
+        grid-template-columns: minmax(0, 1fr) 400px;
+        gap: 56px;
+    }
+
+    .scene-stage {
+        width: 500px;
+    }
+
+    .phone-preview {
+        width: 270px;
+        height: 560px;
+    }
+}
+
+@media (max-width: 900px) {
+    .login-page {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 30px 20px;
+    }
+
+    .preview-scene {
+        min-height: 460px;
+    }
+
+    .scene-stage {
+        width: 100%;
+        height: 460px;
+    }
+
+    .phone-preview {
+        width: 210px;
+        height: 440px;
+        left: 50%;
+        top: 50%;
+    }
+
+    .auth-card {
+        max-width: 430px;
+        margin: 0 auto;
+    }
+
+    .preview-scene::before {
+        width: 420px;
+        height: 420px;
+    }
+
+    .preview-scene::after {
+        width: 520px;
+        height: 300px;
+    }
+
+    .dynamic-island {
+        width: 76px;
+        height: 23px;
+        top: 15px;
+    }
+
+    .otp-notification {
+        top: 120px;
+    }
+}
+
+@media (max-width: 620px) {
+    .login-page {
+        padding: 24px 14px;
+        gap: 20px;
+    }
+
+    .preview-scene {
+        min-height: 320px;
+    }
+
+    .scene-stage {
+        height: 320px;
+    }
+
+    .phone-preview {
+        width: 142px;
+        height: 298px;
+    }
+
+    .phone-frame {
+        padding: 7px;
+        border-radius: 44px;
+    }
+
+    .phone-screen {
+        border-radius: 36px;
+    }
+
+    .dynamic-island {
+        width: 52px;
+        height: 15px;
+        top: 11px;
+    }
+
+    .otp-notification {
+        left: 10px;
+        right: 10px;
+        top: 86px;
+        padding: 10px 7px;
+        border-radius: 15px;
+    }
+
+    .otp-notification strong {
+        font-size: 10px;
+        margin-bottom: 5px;
+    }
+
+    .otp-notification span {
+        font-size: 14px;
+        letter-spacing: 4px;
+    }
+
+    .auth-card {
+        padding: 26px;
+        border-radius: 28px;
+    }
+
+    .brand-logo {
+        width: 62px;
+        height: 62px;
+        border-radius: 21px;
+        font-size: 24px;
+    }
+
+    .brand h1 {
+        font-size: 30px;
+    }
+
+    .otp-boxes {
+        gap: 7px;
+    }
+
+    .otp-box {
+        height: 48px;
+        border-radius: 14px;
+        font-size: 20px;
+    }
+
+    .otp-tools {
+        grid-template-columns: 1fr;
+    }
+}
