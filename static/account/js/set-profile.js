@@ -1,57 +1,54 @@
 document.addEventListener("DOMContentLoaded", () => {
     const page = document.getElementById("set-profile-page");
-    const form = document.getElementById("set-profile-form");
 
-    if (!page || !form) {
-        console.error("Set profile page/form not found.");
-        return;
-    }
+    if (!page) return;
 
-    const API_URL = page.dataset.setProfileApi || "/account/api/set-profile/";
+    const SET_PROFILE_API = page.dataset.setProfileApi || "/account/api/set-profile/";
+    const CART_API = page.dataset.cartApi || "/cart/api/carts/";
+    const WALLET_API = page.dataset.walletApi || "/payment/api/wallet/";
+    const PREMIUM_API = page.dataset.premiumApi || "/payment/api/premium/";
+
     const HOME_URL = page.dataset.homeUrl || "/ketabook/";
     const LOGIN_URL = page.dataset.loginUrl || "/account/login/";
+    const DEFAULT_PHOTO_URL = page.dataset.defaultPhotoUrl || "/static/account/default.jpg";
 
-    const DEFAULT_PHOTO_URL =
-        page.dataset.defaultPhotoUrl ||
-        document.getElementById("profile-photo-preview")?.getAttribute("src") ||
-        "/static/account/default.jpg";
-
-    const fullnameInput = document.getElementById("profile-fullname");
-    const emailInput = document.getElementById("profile-email");
-    const addressInput = document.getElementById("profile-address");
-
-    const birthYearInput = document.getElementById("birth-year-shamsi");
-    const birthMonthInput = document.getElementById("birth-month-shamsi");
-    const birthDayInput = document.getElementById("birth-day-shamsi");
-    const ageInput = document.getElementById("profile-age");
+    const form = document.getElementById("set-profile-form");
 
     const photoInput = document.getElementById("profile-photo");
     const photoPreview = document.getElementById("profile-photo-preview");
     const photoPlaceholder = document.getElementById("profile-photo-placeholder");
 
+    const fullnameInput = document.getElementById("profile-fullname");
+    const usernameInput = document.getElementById("profile-username");
+    const emailInput = document.getElementById("profile-email");
+    const ageInput = document.getElementById("profile-age");
+    const addressInput = document.getElementById("profile-address");
+
     const statusBox = document.getElementById("profile-status");
     const submitButton = document.getElementById("submit-profile-button");
+    const submitText = submitButton?.querySelector(".button-text");
+    const logoutButton = document.getElementById("profile-logout-button");
 
     const headingTitle = document.getElementById("profile-heading-title");
     const headingSubtitle = document.getElementById("profile-heading-subtitle");
-
-    const logoutButton = document.getElementById("profile-logout-button");
 
     const sideCartCount = document.getElementById("profile-side-cart-count");
     const sideWalletAmount = document.getElementById("profile-side-wallet-amount");
     const sidePremiumStatus = document.getElementById("profile-side-premium-status");
 
-    const BIRTH_STORAGE_KEYS = {
-        year: "ketabook_birth_year_shamsi",
-        month: "ketabook_birth_month_shamsi",
-        day: "ketabook_birth_day_shamsi"
-    };
-
-    let isSaving = false;
+    let selectedPhotoFile = null;
 
     /* =====================================================
        AUTH
     ===================================================== */
+
+    function getRawAccessToken() {
+        return (
+            localStorage.getItem("ketabook_access_token") ||
+            localStorage.getItem("access_token") ||
+            ""
+        );
+    }
 
     function decodeJwtPayload(token) {
         try {
@@ -60,16 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!payload) return null;
 
             const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
-            const json = decodeURIComponent(
-                atob(base64)
-                    .split("")
-                    .map(char => {
-                        return "%" + ("00" + char.charCodeAt(0).toString(16)).slice(-2);
-                    })
-                    .join("")
-            );
-
-            return JSON.parse(json);
+            return JSON.parse(atob(base64));
         } catch {
             return null;
         }
@@ -82,10 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!payload || !payload.exp) return false;
 
-        const now = Math.floor(Date.now() / 1000);
-        const safetySeconds = 10;
-
-        return payload.exp <= now + safetySeconds;
+        return payload.exp <= Math.floor(Date.now() / 1000) + 10;
     }
 
     function clearAuthState() {
@@ -102,31 +87,40 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("is_new");
 
         localStorage.removeItem("ketabook_cart_count");
+        localStorage.removeItem("ketabook_wallet_amount");
+        localStorage.removeItem("ketabook_premium_days");
     }
 
-    function getRawAccessToken() {
-        return (
-            localStorage.getItem("ketabook_access_token") ||
-            localStorage.getItem("access_token") ||
-            ""
-        );
-    }
+    function getAccessToken() {
+        if (window.ketabookAuth && typeof window.ketabookAuth.getAccessToken === "function") {
+            const token = window.ketabookAuth.getAccessToken();
 
-    function getToken() {
+            if (token && !isTokenExpired(token)) {
+                return token;
+            }
+        }
+
         const token = getRawAccessToken();
 
         if (!token || isTokenExpired(token)) {
             clearAuthState();
-
-            if (window.ketabookAuth) {
-                window.ketabookAuth.clearAuthState();
-                window.ketabookAuth.refreshNavbar();
-            }
-
             return "";
         }
 
         return token;
+    }
+
+    function refreshNavbar() {
+        if (window.ketabookAuth) {
+            window.ketabookAuth.clearAuthState?.();
+            window.ketabookAuth.refreshNavbar?.();
+        }
+    }
+
+    function redirectToLogin() {
+        clearAuthState();
+        refreshNavbar();
+        window.location.href = LOGIN_URL;
     }
 
     function getCSRFToken() {
@@ -143,35 +137,43 @@ document.addEventListener("DOMContentLoaded", () => {
         return "";
     }
 
+    function authHeaders(extraHeaders = {}) {
+        const token = getAccessToken();
+
+        const headers = {
+            "Accept": "application/json",
+            ...extraHeaders
+        };
+
+        if (token) {
+            headers["Authorization"] = `Bearer ${token}`;
+        }
+
+        const csrfToken = getCSRFToken();
+
+        if (csrfToken) {
+            headers["X-CSRFToken"] = csrfToken;
+        }
+
+        return headers;
+    }
+
     /* =====================================================
-       TEXT / DIGITS
+       HELPERS
     ===================================================== */
-
-    function normalizeDigits(value) {
-        const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
-        const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
-
-        return String(value)
-            .replace(/[۰-۹]/g, digit => persianDigits.indexOf(digit))
-            .replace(/[٠-٩]/g, digit => arabicDigits.indexOf(digit));
-    }
-
-    function onlyDigits(value) {
-        return normalizeDigits(value).replace(/\D/g, "");
-    }
 
     function toPersianDigits(value) {
         return String(value).replace(/\d/g, digit => "۰۱۲۳۴۵۶۷۸۹"[digit]);
     }
 
-    function formatMoney(value) {
-        const number = Number(value) || 0;
-        return `${number.toLocaleString("fa-IR")} تومان`;
+    function numberValue(value) {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : 0;
     }
 
-    /* =====================================================
-       UI HELPERS
-    ===================================================== */
+    function formatMoney(value) {
+        return `${numberValue(value).toLocaleString("fa-IR")} تومان`;
+    }
 
     function showStatus(message, type = "error") {
         if (!statusBox) return;
@@ -189,394 +191,300 @@ document.addEventListener("DOMContentLoaded", () => {
         statusBox.className = "profile-status";
     }
 
-    function setLoading(isLoading) {
+    function setLoading(loading) {
         if (!submitButton) return;
 
-        submitButton.disabled = isLoading;
-        submitButton.classList.toggle("is-loading", isLoading);
+        submitButton.disabled = loading;
+        submitButton.classList.toggle("is-loading", loading);
 
-        const text = submitButton.querySelector(".button-text");
-
-        if (text) {
-            text.textContent = isLoading ? "در حال ذخیره..." : "ذخیره و ادامه";
+        if (submitText) {
+            submitText.textContent = loading ? "در حال ذخیره..." : "ذخیره و ادامه";
         }
     }
 
-    function isBadDefaultPhotoUrl(url) {
-        if (!url) return true;
+    function setPhotoPreview(url) {
+        if (!photoPreview || !photoPlaceholder) return;
 
-        return (
-            url.includes("/profile_photos/default") ||
-            (url.endsWith("/default.jpg") && !url.includes("/static/"))
-        );
-    }
-
-    function setProfilePhoto(url) {
-        if (!photoPreview) return;
-
-        photoPreview.src = isBadDefaultPhotoUrl(url)
-            ? DEFAULT_PHOTO_URL
-            : url;
-
+        photoPreview.src = url || DEFAULT_PHOTO_URL;
         photoPreview.hidden = false;
-
-        if (photoPlaceholder) {
-            photoPlaceholder.hidden = true;
-        }
+        photoPlaceholder.hidden = true;
     }
-
-    function ensureDefaultPhoto() {
-        setProfilePhoto(DEFAULT_PHOTO_URL);
-    }
-
-    function updateProfileHeading(user = {}, profile = {}) {
-        if (!headingTitle || !headingSubtitle) return;
-
-        const fullname = profile.fullname || "";
-        const age = profile.age || ageInput?.value || "";
-
-        if (fullname) {
-            headingTitle.textContent = fullname;
-
-            if (age) {
-                headingSubtitle.textContent = `${toPersianDigits(age)} ساله`;
-            } else {
-                headingSubtitle.textContent = "به حساب کاربری کتابوک خوش آمدید";
-            }
-
-            return;
-        }
-
-        headingTitle.textContent = "تکمیل پروفایل";
-        headingSubtitle.textContent = "اطلاعات حساب کاربری خود را وارد کنید.";
-    }
-
-    /* =====================================================
-       AGE / BIRTH
-    ===================================================== */
-
-    function getCurrentShamsiDate() {
-        const parts = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {
-            year: "numeric",
-            month: "numeric",
-            day: "numeric"
-        }).formatToParts(new Date());
-
-        const year = Number(onlyDigits(parts.find(part => part.type === "year")?.value || ""));
-        const month = Number(onlyDigits(parts.find(part => part.type === "month")?.value || ""));
-        const day = Number(onlyDigits(parts.find(part => part.type === "day")?.value || ""));
-
-        return { year, month, day };
-    }
-
-    function calculateAge() {
-        if (!birthYearInput || !birthMonthInput || !birthDayInput || !ageInput) {
-            return "";
-        }
-
-        const birthYear = Number(onlyDigits(birthYearInput.value));
-        const birthMonth = Number(onlyDigits(birthMonthInput.value));
-        const birthDay = Number(onlyDigits(birthDayInput.value));
-
-        if (!birthYear || !birthMonth || !birthDay) {
-            ageInput.value = "";
-            return "";
-        }
-
-        const today = getCurrentShamsiDate();
-
-        let age = today.year - birthYear;
-
-        if (
-            today.month < birthMonth ||
-            (today.month === birthMonth && today.day < birthDay)
-        ) {
-            age -= 1;
-        }
-
-        ageInput.value = age > 0 ? String(age) : "";
-
-        return ageInput.value;
-    }
-
-    function saveBirthDateToStorage() {
-        if (birthYearInput) {
-            localStorage.setItem(BIRTH_STORAGE_KEYS.year, onlyDigits(birthYearInput.value));
-        }
-
-        if (birthMonthInput) {
-            localStorage.setItem(BIRTH_STORAGE_KEYS.month, onlyDigits(birthMonthInput.value));
-        }
-
-        if (birthDayInput) {
-            localStorage.setItem(BIRTH_STORAGE_KEYS.day, onlyDigits(birthDayInput.value));
-        }
-    }
-
-    function restoreBirthDateFromStorage() {
-        if (birthYearInput) {
-            birthYearInput.value = localStorage.getItem(BIRTH_STORAGE_KEYS.year) || "";
-        }
-
-        if (birthMonthInput) {
-            birthMonthInput.value = localStorage.getItem(BIRTH_STORAGE_KEYS.month) || "";
-        }
-
-        if (birthDayInput) {
-            birthDayInput.value = localStorage.getItem(BIRTH_STORAGE_KEYS.day) || "";
-        }
-
-        calculateAge();
-    }
-
-    function clearBirthDateStorage() {
-        localStorage.removeItem(BIRTH_STORAGE_KEYS.year);
-        localStorage.removeItem(BIRTH_STORAGE_KEYS.month);
-        localStorage.removeItem(BIRTH_STORAGE_KEYS.day);
-    }
-
-    /* =====================================================
-       SIDEBAR STATS
-    ===================================================== */
-
-    function updateProfileSidebarStats() {
-        if (sideCartCount) {
-            const cartCount =
-                localStorage.getItem("ketabook_cart_count") ||
-                localStorage.getItem("cart_count") ||
-                "0";
-
-            sideCartCount.textContent = toPersianDigits(cartCount);
-        }
-
-        if (sideWalletAmount) {
-            const walletAmount =
-                localStorage.getItem("ketabook_wallet_amount") ||
-                "0";
-
-            sideWalletAmount.textContent = formatMoney(walletAmount);
-        }
-
-        if (sidePremiumStatus) {
-            const premiumDays = Number(localStorage.getItem("ketabook_premium_days") || 0);
-
-            if (premiumDays > 0) {
-                sidePremiumStatus.textContent = `${premiumDays.toLocaleString("fa-IR")} روز باقی مانده`;
-            } else {
-                sidePremiumStatus.textContent = "اشتراک ندارید";
-            }
-        }
-    }
-
-    /* =====================================================
-       STORAGE
-    ===================================================== */
 
     function saveAuthUser(data) {
-        const user = data?.user || data?.catalog;
+        const user = data?.user || data;
 
-        if (user) {
-            localStorage.setItem("ketabook_user", JSON.stringify(user));
-            localStorage.setItem("user", JSON.stringify(user));
-        }
+        if (!user) return;
 
-        localStorage.setItem("ketabook_is_logged_in", "true");
-    }
+        localStorage.setItem("ketabook_user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
 
-    function logoutUser() {
-        clearAuthState();
-        clearBirthDateStorage();
-
-        if (window.ketabookAuth) {
-            window.ketabookAuth.clearAuthState();
+        if (window.ketabookAuth?.refreshNavbar) {
             window.ketabookAuth.refreshNavbar();
         }
+    }
 
-        sessionStorage.setItem("ketabook_toast", "از حساب خارج شدید");
+    function getProfileFromPayload(data) {
+        return data?.user?.profile || data?.profile || {};
+    }
 
-        window.location.href = HOME_URL;
+    function getUserFromPayload(data) {
+        return data?.user || data || {};
+    }
+
+    function setProfileFields(data) {
+        const user = getUserFromPayload(data);
+        const profile = getProfileFromPayload(data);
+
+        if (fullnameInput) {
+            fullnameInput.value = profile.fullname || "";
+        }
+
+        if (usernameInput) {
+            usernameInput.value = profile.username || "";
+        }
+
+        if (emailInput) {
+            emailInput.value = user.email || "";
+        }
+
+        if (ageInput) {
+            ageInput.value = profile.age ?? "";
+        }
+
+        if (addressInput) {
+            addressInput.value = profile.address || "";
+        }
+
+        setPhotoPreview(profile.profile_pic || DEFAULT_PHOTO_URL);
+
+        if (headingTitle) {
+            headingTitle.textContent = profile.fullname
+                ? "پروفایل شما"
+                : "تکمیل پروفایل";
+        }
+
+        if (headingSubtitle) {
+            headingSubtitle.textContent = profile.fullname
+                ? "اطلاعات حساب کاربری خود را مدیریت کنید."
+                : "اطلاعات حساب کاربری خود را وارد کنید.";
+        }
+    }
+
+    function buildProfileFormData() {
+        const formData = new FormData();
+
+        formData.append("fullname", String(fullnameInput?.value || "").trim());
+        formData.append("username", String(usernameInput?.value || "").trim());
+        formData.append("email", String(emailInput?.value || "").trim());
+        formData.append("address", String(addressInput?.value || "").trim());
+
+        const ageValue = String(ageInput?.value || "").trim();
+
+        if (ageValue) {
+            formData.append("age", ageValue);
+        }
+
+        if (selectedPhotoFile) {
+            formData.append("photo", selectedPhotoFile);
+        }
+
+        return formData;
+    }
+
+    function validateProfileForm() {
+        const ageValue = String(ageInput?.value || "").trim();
+
+        if (ageValue) {
+            const age = Number(ageValue);
+
+            if (!Number.isInteger(age) || age < 8) {
+                showStatus("!سن کمه .", "error");
+                return false;
+            }
+
+            if (!Number.isInteger(age) || age > 120) {
+                showStatus("!سن زیاده .", "error");
+                return false;
+            }
+        }
+
+        const usernameValue = String(usernameInput?.value || "").trim();
+
+        if (usernameValue && usernameValue.length < 3) {
+            showStatus("نام کاربری باید حداقل ۳ کاراکتر باشد.", "error");
+            return false;
+        }
+
+        return true;
     }
 
     /* =====================================================
        API
     ===================================================== */
 
-    async function loadExistingProfile() {
-        const token = getToken();
-
-        ensureDefaultPhoto();
-        restoreBirthDateFromStorage();
-        updateProfileSidebarStats();
+    async function requestJson(url) {
+        const token = getAccessToken();
 
         if (!token) {
-            window.location.href = LOGIN_URL;
-            return;
+            redirectToLogin();
+            return {};
         }
 
+        const response = await fetch(url, {
+            method: "GET",
+            credentials: "same-origin",
+            headers: authHeaders()
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            redirectToLogin();
+            return {};
+        }
+
+        if (!response.ok) {
+            return {};
+        }
+
+        return response.json();
+    }
+
+    async function loadExistingProfile() {
         try {
-            const response = await fetch(API_URL, {
-                method: "GET",
-                headers: {
-                    "Accept": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                credentials: "same-origin"
-            });
+            const data = await requestJson(SET_PROFILE_API);
 
-            if (response.status === 401 || response.status === 403) {
-                logoutUser();
-                return;
-            }
+            if (!data) return;
 
-            if (!response.ok) {
-                ensureDefaultPhoto();
-                updateProfileHeading();
-                return;
-            }
-
-            const data = await response.json();
-
-            const user = data?.user || data?.catalog || {};
-            const profile = user?.profile || {};
-
-            if (fullnameInput) {
-                fullnameInput.value = profile.fullname || "";
-            }
-
-            if (emailInput) {
-                emailInput.value = user.email || "";
-            }
-
-            if (addressInput) {
-                addressInput.value = profile.address || "";
-            }
-
-            if (ageInput && profile.age) {
-                ageInput.value = profile.age;
-            }
-
-            setProfilePhoto(profile.profile_pic || DEFAULT_PHOTO_URL);
-
+            setProfileFields(data);
             saveAuthUser(data);
-            restoreBirthDateFromStorage();
-
-            if (!ageInput?.value && profile.age) {
-                ageInput.value = profile.age;
-            }
-
-            updateProfileHeading(user, profile);
-            updateProfileSidebarStats();
         } catch (error) {
-            console.error("Profile GET failed:", error);
-            ensureDefaultPhoto();
-            restoreBirthDateFromStorage();
-            updateProfileHeading();
-            updateProfileSidebarStats();
+            console.error("Profile load failed:", error);
+            showStatus("دریافت اطلاعات پروفایل انجام نشد.", "error");
         }
     }
 
-    function buildProfileFormData() {
-        calculateAge();
-        saveBirthDateToStorage();
-
-        const formData = new FormData();
-
-        formData.append("fullname", fullnameInput?.value.trim() || "");
-        formData.append("email", emailInput?.value.trim() || "");
-        formData.append("address", addressInput?.value.trim() || "");
-
-        if (ageInput?.value) {
-            formData.append("age", ageInput.value);
-        }
-
-        if (photoInput?.files?.[0]) {
-            formData.append("photo", photoInput.files[0]);
-        }
-
-        return formData;
-    }
-
-    async function submitProfile(event) {
-        if (event) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
-
-        if (isSaving) return;
+    async function saveProfile(event) {
+        event.preventDefault();
 
         hideStatus();
 
-        const token = getToken();
+        const token = getAccessToken();
 
         if (!token) {
-            window.location.href = LOGIN_URL;
+            redirectToLogin();
             return;
         }
 
-        if (!fullnameInput || !fullnameInput.value.trim()) {
-            showStatus("نام و نام خانوادگی را وارد کنید.", "error");
-            fullnameInput?.focus();
+        if (!validateProfileForm()) {
             return;
-        }
-
-        const formData = buildProfileFormData();
-
-        const headers = {
-            "Accept": "application/json",
-            "Authorization": `Bearer ${token}`
-        };
-
-        const csrfToken = getCSRFToken();
-
-        if (csrfToken) {
-            headers["X-CSRFToken"] = csrfToken;
         }
 
         try {
-            isSaving = true;
             setLoading(true);
 
-            const response = await fetch(API_URL, {
+            const response = await fetch(SET_PROFILE_API, {
                 method: "POST",
-                headers,
                 credentials: "same-origin",
-                body: formData
+                headers: authHeaders(),
+                body: buildProfileFormData()
             });
 
             const data = await response.json().catch(() => ({}));
 
             if (response.status === 401 || response.status === 403) {
-                logoutUser();
+                redirectToLogin();
                 return;
             }
 
             if (!response.ok) {
-                const message =
-                    data.error ||
+                const errorMessage =
+                    data.username ||
+                    data.age ||
+                    data.email ||
                     data.detail ||
-                    data.message ||
-                    JSON.stringify(data) ||
+                    data.error ||
                     "ذخیره پروفایل انجام نشد.";
 
-                throw new Error(message);
+                throw new Error(errorMessage);
             }
 
+            selectedPhotoFile = null;
+            setProfileFields(data);
             saveAuthUser(data);
 
-            const savedUser = data?.user || data?.catalog || {};
-            const savedProfile = savedUser?.profile || {};
-
-            updateProfileHeading(savedUser, savedProfile);
-            updateProfileSidebarStats();
-
-            sessionStorage.setItem("ketabook_toast", "پروفایل ذخیره شد");
-
-            window.location.href = HOME_URL;
+            showStatus("پروفایل با موفقیت ذخیره شد.", "success");
         } catch (error) {
-            showStatus(error.message, "error");
+            console.error("Profile save failed:", error);
+            showStatus(error.message || "ذخیره پروفایل انجام نشد.", "error");
         } finally {
-            isSaving = false;
             setLoading(false);
+        }
+    }
+
+    async function loadSideStats() {
+        const token = getAccessToken();
+
+        if (!token) {
+            if (sideCartCount) sideCartCount.textContent = "۰";
+            if (sideWalletAmount) sideWalletAmount.textContent = "وارد نشده‌اید";
+            if (sidePremiumStatus) sidePremiumStatus.textContent = "وارد نشده‌اید";
+            return;
+        }
+
+        if (sideWalletAmount) sideWalletAmount.textContent = "در حال دریافت...";
+        if (sidePremiumStatus) sidePremiumStatus.textContent = "در حال دریافت...";
+
+        const [cart, wallet, premium] = await Promise.all([
+            requestJson(CART_API),
+            requestJson(WALLET_API),
+            requestJson(PREMIUM_API),
+        ]);
+
+        const cartData = cart?.cart || cart || {};
+        const walletData = wallet?.wallet || wallet || {};
+        const premiumData = premium?.premium || premium || {};
+
+        const totalItems = cartData.total_items ?? 0;
+        const walletAmount = walletData.amount ?? walletData.balance ?? 0;
+
+        const isPremiumActive =
+            premiumData.is_active ||
+            premiumData.premium_status ||
+            walletData.premium_status ||
+            false;
+
+        const premiumExpiration =
+            premiumData.premium_expiration ||
+            premiumData.expiration ||
+            walletData.premium_expiration ||
+            "";
+
+        if (sideCartCount) {
+            sideCartCount.textContent = toPersianDigits(totalItems);
+        }
+
+        if (sideWalletAmount) {
+            sideWalletAmount.textContent = formatMoney(walletAmount);
+        }
+
+        if (sidePremiumStatus) {
+            if (!isPremiumActive) {
+                sidePremiumStatus.textContent = "اشتراک ندارید";
+            } else if (!premiumExpiration) {
+                sidePremiumStatus.textContent = "فعال";
+            } else {
+                const endDate = new Date(premiumExpiration);
+                const today = new Date();
+
+                if (Number.isNaN(endDate.getTime())) {
+                    sidePremiumStatus.textContent = "فعال";
+                } else {
+                    const diffDays = Math.ceil((endDate - today) / 86400000);
+
+                    sidePremiumStatus.textContent = diffDays > 0
+                        ? `${toPersianDigits(diffDays)} روز باقی مانده`
+                        : "اشتراک ندارید";
+                }
+            }
         }
     }
 
@@ -584,84 +492,45 @@ document.addEventListener("DOMContentLoaded", () => {
        EVENTS
     ===================================================== */
 
-    if (birthYearInput) {
-        birthYearInput.addEventListener("input", () => {
-            birthYearInput.value = onlyDigits(birthYearInput.value).slice(0, 4);
-            saveBirthDateToStorage();
-            calculateAge();
-
-            updateProfileHeading({}, {
-                fullname: fullnameInput?.value.trim() || "",
-                age: ageInput?.value || ""
-            });
-        });
-    }
-
-    if (birthDayInput) {
-        birthDayInput.addEventListener("input", () => {
-            birthDayInput.value = onlyDigits(birthDayInput.value).slice(0, 2);
-            saveBirthDateToStorage();
-            calculateAge();
-
-            updateProfileHeading({}, {
-                fullname: fullnameInput?.value.trim() || "",
-                age: ageInput?.value || ""
-            });
-        });
-    }
-
-    if (birthMonthInput) {
-        birthMonthInput.addEventListener("change", () => {
-            saveBirthDateToStorage();
-            calculateAge();
-
-            updateProfileHeading({}, {
-                fullname: fullnameInput?.value.trim() || "",
-                age: ageInput?.value || ""
-            });
-        });
-    }
-
-    if (fullnameInput) {
-        fullnameInput.addEventListener("input", () => {
-            updateProfileHeading({}, {
-                fullname: fullnameInput.value.trim(),
-                age: ageInput?.value || ""
-            });
-        });
-    }
-
-    if (photoInput && photoPreview) {
+    if (photoInput) {
         photoInput.addEventListener("change", () => {
             const file = photoInput.files?.[0];
 
-            if (!file) {
-                setProfilePhoto(DEFAULT_PHOTO_URL);
-                return;
-            }
+            if (!file) return;
 
-            setProfilePhoto(URL.createObjectURL(file));
+            selectedPhotoFile = file;
+
+            const reader = new FileReader();
+
+            reader.onload = event => {
+                setPhotoPreview(event.target.result);
+            };
+
+            reader.readAsDataURL(file);
         });
     }
 
+    if (form) {
+        form.addEventListener("submit", saveProfile);
+    }
+
     if (logoutButton) {
-        logoutButton.addEventListener("click", logoutUser);
+        logoutButton.addEventListener("click", () => {
+            clearAuthState();
+            refreshNavbar();
+            window.location.href = HOME_URL;
+        });
     }
 
-    form.addEventListener("submit", submitProfile, true);
-
-    if (submitButton) {
-        submitButton.addEventListener("click", submitProfile, true);
-    }
-
-    window.addEventListener("storage", updateProfileSidebarStats);
+    window.addEventListener("focus", () => {
+        loadSideStats();
+    });
 
     /* =====================================================
        INIT
     ===================================================== */
 
-    ensureDefaultPhoto();
-    restoreBirthDateFromStorage();
-    updateProfileSidebarStats();
+    setPhotoPreview(DEFAULT_PHOTO_URL);
     loadExistingProfile();
+    loadSideStats();
 });

@@ -1,0 +1,1341 @@
+* {
+    box-sizing: border-box;
+}
+
+[hidden],
+.book-status-message[hidden],
+.book-discount-badge[hidden],
+#book-old-price[hidden],
+#book-cover[hidden],
+#book-author-image[hidden],
+#book-publisher-image[hidden],
+#book-publisher-card[hidden],
+.book-review-form[hidden],
+.book-review-form-status[hidden],
+.book-reviews-empty[hidden] {
+    display: none !important;
+}
+
+:root {
+    --book-bg: #17181d;
+    --book-panel: #1f2027;
+    --book-panel-2: #24252d;
+    --book-card: rgba(255, 255, 255, 0.04);
+    --book-border: rgba(255, 255, 255, 0.08);
+
+    --book-text-main: #ffffff;
+    --book-text-soft: rgba(255, 255, 255, 0.68);
+    --book-text-faint: rgba(255, 255, 255, 0.46);
+
+    --book-orange: #c45500;
+    --book-orange-2: #e66500;
+    --book-orange-3: #ff7a18;
+
+    --book-cyan: #10a5a5;
+    --book-danger: #e84d5b;
+
+    --book-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.36),
+        0 8px 26px rgba(0, 0, 0, 0.26);
+}
+
+html[data-theme="light"],
+body[data-theme="light"] {
+    --book-bg: #f7f7f8;
+    --book-panel: #ffffff;
+    --book-panel-2: #f4f4f6;
+    --book-card: rgba(31, 36, 48, 0.035);
+    --book-border: rgba(31, 36, 48, 0.08);
+
+    --book-text-main: #1f2430;
+    --book-text-soft: rgba(31, 36, 48, 0.66);
+    --book-text-faint: rgba(31, 36, 48, 0.45);
+
+    --book-shadow:
+        0 28px 70px rgba(42, 54, 70, 0.12),
+        0 8px 22px rgba(42, 54, 70, 0.06);
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.book-detail-page {
+    min-height: calc(100vh - 82px);
+    padding: 34px 24px 78px;
+    direction: rtl;
+    color: var(--book-text-main);
+    background:
+        radial-gradient(circle at 12% 18%, rgba(59, 130, 246, 0.12), transparent 32%),
+        radial-gradient(circle at 84% 12%, rgba(255, 122, 24, 0.09), transparent 34%),
+        var(--book-bg);
+}
+
+.book-detail-shell {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+}
+
+.book-breadcrumb {
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    color: var(--book-text-faint);
+    font-size: 0.82rem;
+    font-weight: 850;
+}
+
+.book-breadcrumb a {
+    color: var(--book-text-soft);
+    text-decoration: none;
+}
+
+.book-breadcrumb a:hover {
+    color: var(--book-orange-3);
+}
+
+.book-breadcrumb strong {
+    color: var(--book-text-main);
+    font-weight: 950;
+}
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.book-detail-layout {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 34px;
+    align-items: start;
+    direction: ltr;
+}
+
+.book-cover-panel,
+.book-info-panel {
+    direction: rtl;
+}
+
+/* =========================================================
+   COVER
+========================================================= */
+
+.book-cover-panel {
+    position: sticky;
+    top: 110px;
+}
+
+.book-cover-card {
+    position: relative;
+    min-height: 456px;
+    padding: 22px;
+    display: grid;
+    place-items: center;
+    border-radius: 30px;
+    background:
+        radial-gradient(circle at 20% 15%, rgba(255, 122, 24, 0.08), transparent 34%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+        var(--book-panel-2);
+    border: 1px solid var(--book-border);
+    box-shadow: var(--book-shadow);
+}
+
+.book-cover-image {
+    width: 100%;
+    max-height: 410px;
+    object-fit: contain;
+    border-radius: 13px;
+    filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.28));
+}
+
+.book-cover-fallback {
+    width: 210px;
+    height: 300px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 950;
+    background: linear-gradient(145deg, var(--book-orange-3), var(--book-orange), #923b00);
+    box-shadow: 0 22px 34px rgba(196, 85, 0, 0.24);
+}
+
+.book-discount-badge {
+    min-width: 54px;
+    height: 54px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: grid;
+    place-items: center;
+    padding: 0 9px;
+    color: #ffffff;
+    background: linear-gradient(145deg, #ff7a18, #e84d2a);
+    border: 2px solid #ffffff;
+    border-radius: 0 0 15px 15px;
+    font-size: 0.96rem;
+    font-weight: 950;
+    box-shadow: 0 12px 22px rgba(232, 77, 42, 0.28);
+}
+
+.book-discount-badge::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translateX(-50%) rotate(45deg);
+    background: inherit;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    border-radius: 3px;
+}
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.book-info-panel {
+    min-width: 0;
+    display: grid;
+    gap: 18px;
+}
+
+.book-main-info {
+    display: grid;
+    gap: 12px;
+}
+
+.book-genre-label {
+    margin: 0;
+    color: var(--book-text-soft);
+    font-size: 0.84rem;
+    font-weight: 950;
+    letter-spacing: 0.02em;
+}
+
+.book-main-info h1 {
+    margin: 0;
+    color: var(--book-text-main);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 950;
+    line-height: 1.32;
+}
+
+.book-description {
+    max-width: 760px;
+    margin: 0;
+    color: var(--book-text-soft);
+    font-size: 1rem;
+    font-weight: 760;
+    line-height: 2.25;
+}
+
+/* =========================================================
+   AUTHOR + PUBLISHER
+========================================================= */
+
+.book-people-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.book-person-card {
+    width: 100%;
+    min-height: 88px;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    border-radius: 20px;
+    background: var(--book-card);
+    border: 1px solid var(--book-border);
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        background 0.22s ease;
+}
+
+.book-person-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(196, 85, 0, 0.28);
+    background:
+        linear-gradient(135deg, rgba(255, 122, 24, 0.055), rgba(196, 85, 0, 0.025)),
+        var(--book-card);
+}
+
+.book-person-avatar {
+    width: 62px;
+    height: 62px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    color: #ffffff;
+    background:
+        linear-gradient(145deg, rgba(255, 122, 24, 0.92), rgba(196, 85, 0, 0.9));
+    box-shadow: 0 12px 22px rgba(196, 85, 0, 0.16);
+}
+
+.book-publisher-avatar {
+    background:
+        linear-gradient(145deg, rgba(16, 165, 165, 0.94), rgba(12, 112, 112, 0.9));
+    box-shadow: 0 12px 22px rgba(16, 165, 165, 0.16);
+}
+
+.book-person-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.book-person-avatar span {
+    font-size: 1.25rem;
+    font-weight: 950;
+}
+
+.book-person-info {
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.book-person-info span {
+    color: var(--book-text-soft);
+    font-size: 0.76rem;
+    font-weight: 850;
+}
+
+.book-person-info strong {
+    color: var(--book-text-main);
+    font-size: 1rem;
+    font-weight: 950;
+    line-height: 1.45;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-person-action {
+    min-width: max-content;
+    color: var(--book-orange-3);
+    font-size: 0.78rem;
+    font-weight: 950;
+}
+
+/* =========================================================
+   META
+========================================================= */
+
+.book-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.book-meta-card {
+    min-height: 86px;
+    padding: 18px;
+    display: grid;
+    align-content: center;
+    gap: 12px;
+    border-radius: 18px;
+    background: var(--book-card);
+    border: 1px solid var(--book-border);
+}
+
+.book-meta-card span {
+    color: var(--book-text-soft);
+    font-size: 0.76rem;
+    font-weight: 850;
+}
+
+.book-meta-card strong {
+    color: var(--book-text-main);
+    font-size: 0.96rem;
+    font-weight: 950;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* =========================================================
+   BUY BOX
+========================================================= */
+
+.book-buy-box {
+    position: relative;
+    overflow: hidden;
+    min-height: 168px;
+    padding: 22px;
+    display: grid;
+    gap: 22px;
+    border-radius: 24px;
+    background:
+        linear-gradient(135deg, rgba(255, 122, 24, 0.12), rgba(196, 85, 0, 0.08)),
+        rgba(196, 85, 0, 0.08);
+    border: 1px solid rgba(196, 85, 0, 0.18);
+    transition:
+        background 0.28s ease,
+        border-color 0.28s ease,
+        box-shadow 0.28s ease;
+}
+
+.book-buy-box.is-physical {
+    background:
+        linear-gradient(135deg, rgba(255, 122, 24, 0.15), rgba(196, 85, 0, 0.08)),
+        rgba(196, 85, 0, 0.08);
+    border-color: rgba(196, 85, 0, 0.2);
+}
+
+.book-buy-box.is-online {
+    background:
+        linear-gradient(135deg, rgba(16, 165, 165, 0.16), rgba(59, 130, 246, 0.08)),
+        rgba(16, 165, 165, 0.08);
+    border-color: rgba(16, 165, 165, 0.24);
+}
+
+.book-price-block {
+    min-width: 0;
+    padding-top: 38px;
+    display: grid;
+    gap: 8px;
+    text-align: left;
+    direction: rtl;
+}
+
+.book-price-block > span {
+    display: none !important;
+}
+
+/* =========================================================
+   SMALL CORNER SEGMENT SWITCH
+========================================================= */
+
+.book-version-switch {
+    width: 188px;
+    height: 34px;
+
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    z-index: 3;
+    isolation: isolate;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+
+    direction: ltr;
+    overflow: hidden;
+
+    padding: 0;
+    border-radius: 11px;
+
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 10px 22px rgba(0, 0, 0, 0.1);
+}
+
+.book-version-option {
+    position: relative;
+    z-index: 2;
+
+    min-width: 0;
+    height: 100%;
+    padding: 0 6px;
+
+    border: 0;
+    cursor: pointer;
+    border-radius: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--book-text-main);
+    background: transparent;
+
+    font: inherit;
+    font-size: 0.66rem;
+    font-weight: 950;
+    line-height: 1;
+    white-space: nowrap;
+
+    transition:
+        color 0.22s ease,
+        opacity 0.22s ease;
+}
+
+.book-version-option[data-book-version="online"] {
+    grid-column: 1;
+}
+
+.book-version-option[data-book-version="physical"] {
+    grid-column: 2;
+}
+
+.book-version-option:disabled {
+    cursor: not-allowed;
+    opacity: 0.34;
+}
+
+.book-version-option.is-active {
+    color: #ffffff;
+}
+
+.book-version-switch-thumb {
+    position: absolute;
+    z-index: 1;
+
+    top: 0;
+    bottom: 0;
+    left: 50%;
+
+    width: 50%;
+    height: 100%;
+
+    border-radius: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 122, 24, 0.42),
+            rgba(255, 122, 24, 0.88),
+            rgba(255, 122, 24, 0.42)
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        0 8px 18px rgba(196, 85, 0, 0.18);
+
+    transition:
+        left 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.24s ease,
+        box-shadow 0.24s ease;
+}
+
+.book-version-switch-thumb::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 40%;
+    width: 20%;
+    background: rgba(196, 85, 0, 0.22);
+}
+
+.book-version-switch.is-physical .book-version-switch-thumb {
+    left: 50%;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 122, 24, 0.42),
+            rgba(255, 122, 24, 0.88),
+            rgba(255, 122, 24, 0.42)
+        );
+}
+
+.book-version-switch.is-physical .book-version-switch-thumb::after {
+    background: rgba(196, 85, 0, 0.22);
+}
+
+.book-version-switch.is-online .book-version-switch-thumb {
+    left: 0;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(34, 211, 238, 0.38),
+            rgba(16, 165, 165, 0.88),
+            rgba(34, 211, 238, 0.38)
+        );
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.14),
+        0 8px 18px rgba(16, 165, 165, 0.18);
+}
+
+.book-version-switch.is-online .book-version-switch-thumb::after {
+    background: rgba(8, 127, 140, 0.22);
+}
+
+html[data-theme="light"] .book-version-switch,
+body[data-theme="light"] .book-version-switch {
+    background: rgba(255, 255, 255, 0.82);
+    border-color: rgba(31, 36, 48, 0.13);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 8px 18px rgba(42, 54, 70, 0.08);
+}
+
+html[data-theme="light"] .book-version-option,
+body[data-theme="light"] .book-version-option {
+    color: #111827;
+}
+
+html[data-theme="light"] .book-version-option.is-active,
+body[data-theme="light"] .book-version-option.is-active {
+    color: #ffffff;
+}
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.book-price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 12px;
+    direction: rtl;
+}
+
+#book-price {
+    color: var(--book-orange-3);
+    font-size: 1.6rem;
+    font-weight: 950;
+    white-space: nowrap;
+    transition: color 0.24s ease;
+}
+
+.book-buy-box.is-physical #book-price {
+    color: var(--book-orange-3);
+}
+
+.book-buy-box.is-online #book-price {
+    color: #22d3ee;
+}
+
+#book-old-price {
+    color: var(--book-text-faint);
+    font-size: 0.95rem;
+    font-weight: 850;
+    white-space: nowrap;
+    text-decoration-thickness: 2px;
+}
+
+.book-version-note {
+    margin: -2px 0 0;
+    color: var(--book-text-soft);
+    font-size: 0.74rem;
+    font-weight: 850;
+    line-height: 1.8;
+}
+
+/* =========================================================
+   BUY ACTIONS
+========================================================= */
+
+.book-buy-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.book-add-cart-button,
+.book-cart-link {
+    min-width: 150px;
+    height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 950;
+    text-decoration: none;
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        opacity 0.22s ease;
+}
+
+.book-add-cart-button {
+    border: 0;
+    cursor: pointer;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--book-orange-3), var(--book-orange), #923b00);
+    box-shadow: 0 14px 28px rgba(196, 85, 0, 0.22);
+}
+
+.book-buy-box.is-physical .book-add-cart-button {
+    background: linear-gradient(135deg, var(--book-orange-3), var(--book-orange), #923b00);
+    box-shadow: 0 14px 28px rgba(196, 85, 0, 0.22);
+}
+
+.book-buy-box.is-online .book-add-cart-button {
+    background: linear-gradient(135deg, #22d3ee, var(--book-cyan), #087f8c);
+    box-shadow: 0 14px 28px rgba(16, 165, 165, 0.2);
+}
+
+.book-add-cart-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(196, 85, 0, 0.3);
+}
+
+.book-buy-box.is-online .book-add-cart-button:hover:not(:disabled) {
+    box-shadow: 0 18px 34px rgba(16, 165, 165, 0.3);
+}
+
+.book-add-cart-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    box-shadow: none;
+    transform: none;
+}
+
+.book-cart-link {
+    color: var(--book-text-main);
+    background: var(--book-panel-2);
+    border: 1px solid var(--book-border);
+}
+
+.book-cart-link:hover {
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   REVIEW SUMMARY + INLINE BUTTON
+========================================================= */
+
+.book-review-summary-row {
+    width: max-content;
+    max-width: 100%;
+    padding: 10px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    color: var(--book-text-main);
+    background: var(--book-card);
+    border: 1px solid var(--book-border);
+}
+
+.book-review-summary-icon {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--book-orange);
+    background: rgba(196, 85, 0, 0.09);
+}
+
+.book-review-summary-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+#book-review-summary-text {
+    color: var(--book-text-soft);
+    font-size: 0.88rem;
+    font-weight: 900;
+}
+
+.book-add-review-inline {
+    min-width: 98px;
+    height: 34px;
+    padding: 0 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 950;
+    background: linear-gradient(135deg, var(--book-orange-3), var(--book-orange), #923b00);
+    box-shadow: 0 10px 20px rgba(196, 85, 0, 0.18);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.book-add-review-inline:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 26px rgba(196, 85, 0, 0.25);
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.book-status-message {
+    padding: 13px 15px;
+    border-radius: 14px;
+    color: var(--book-text-main);
+    font-size: 0.86rem;
+    font-weight: 850;
+    line-height: 1.8;
+    background: rgba(16, 165, 165, 0.1);
+    border: 1px solid rgba(16, 165, 165, 0.18);
+}
+
+.book-status-message.is-error {
+    color: var(--book-danger);
+    background: rgba(232, 77, 91, 0.1);
+    border-color: rgba(232, 77, 91, 0.22);
+}
+
+.book-status-message.is-success {
+    color: var(--book-cyan);
+}
+
+/* =========================================================
+   COMMENTS
+========================================================= */
+
+.book-comments-section {
+    margin-top: 34px;
+    padding: 26px;
+    direction: rtl;
+    border-radius: 28px;
+    background: var(--book-panel);
+    border: 1px solid var(--book-border);
+    box-shadow: var(--book-shadow);
+}
+
+.book-comments-header {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.book-comments-header h2 {
+    margin: 0 0 8px;
+    color: var(--book-text-main);
+    font-size: 1.25rem;
+    font-weight: 950;
+}
+
+.book-comments-header p {
+    margin: 0;
+    color: var(--book-text-soft);
+    font-size: 0.86rem;
+    font-weight: 750;
+    line-height: 1.8;
+}
+
+.book-add-review-toggle {
+    min-width: 124px;
+    height: 44px;
+    border: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 950;
+    background: linear-gradient(135deg, var(--book-orange-3), var(--book-orange), #923b00);
+    box-shadow: 0 14px 28px rgba(196, 85, 0, 0.18);
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.book-add-review-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 34px rgba(196, 85, 0, 0.26);
+}
+
+.book-review-form {
+    margin-bottom: 22px;
+    padding: 18px;
+    display: grid;
+    gap: 13px;
+    border-radius: 22px;
+    background: var(--book-card);
+    border: 1px solid var(--book-border);
+}
+
+.book-review-form label {
+    color: var(--book-text-main);
+    font-size: 0.9rem;
+    font-weight: 950;
+}
+
+.book-review-form textarea {
+    width: 100%;
+    min-height: 122px;
+    padding: 14px 16px;
+    border: 1px solid var(--book-border);
+    outline: 0;
+    resize: vertical;
+    border-radius: 16px;
+    color: var(--book-text-main);
+    background: var(--book-panel-2);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 2;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.book-review-form textarea:focus {
+    border-color: rgba(196, 85, 0, 0.45);
+    box-shadow: 0 0 0 4px rgba(196, 85, 0, 0.1);
+}
+
+.book-review-form textarea::placeholder {
+    color: var(--book-text-faint);
+}
+
+.book-review-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.book-review-submit,
+.book-review-cancel {
+    min-width: 110px;
+    height: 42px;
+    border-radius: 13px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 950;
+}
+
+.book-review-submit {
+    border: 0;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--book-orange-3), var(--book-orange));
+}
+
+.book-review-submit:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.book-review-cancel {
+    color: var(--book-text-main);
+    background: var(--book-panel-2);
+    border: 1px solid var(--book-border);
+}
+
+.book-review-form-status {
+    padding: 11px 13px;
+    border-radius: 13px;
+    color: var(--book-text-main);
+    font-size: 0.82rem;
+    font-weight: 850;
+    line-height: 1.8;
+    background: rgba(16, 165, 165, 0.1);
+    border: 1px solid rgba(16, 165, 165, 0.18);
+}
+
+.book-review-form-status.is-error {
+    color: var(--book-danger);
+    background: rgba(232, 77, 91, 0.1);
+    border-color: rgba(232, 77, 91, 0.22);
+}
+
+.book-review-form-status.is-success {
+    color: var(--book-cyan);
+}
+
+.book-reviews-list {
+    display: grid;
+    gap: 14px;
+}
+
+.book-review-card {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 14px;
+    border-radius: 20px;
+    background: var(--book-card);
+    border: 1px solid var(--book-border);
+}
+
+.book-review-avatar {
+    width: 48px;
+    height: 48px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    border-radius: 16px;
+    color: #ffffff;
+    background: linear-gradient(145deg, var(--book-orange-3), var(--book-orange));
+}
+
+.book-review-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.book-review-avatar span {
+    font-size: 1rem;
+    font-weight: 950;
+}
+
+.book-review-content {
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.book-review-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.book-review-head strong {
+    color: var(--book-text-main);
+    font-size: 0.9rem;
+    font-weight: 950;
+}
+
+.book-review-head time {
+    color: var(--book-text-faint);
+    font-size: 0.75rem;
+    font-weight: 750;
+}
+
+.book-review-content p {
+    margin: 0;
+    color: var(--book-text-soft);
+    font-size: 0.9rem;
+    font-weight: 730;
+    line-height: 2;
+}
+
+.book-reviews-empty {
+    padding: 22px;
+    text-align: center;
+    border-radius: 20px;
+    color: var(--book-text-soft);
+    background: var(--book-card);
+    border: 1px solid var(--book-border);
+    font-size: 0.88rem;
+    font-weight: 850;
+}
+
+/* old actions/rating hidden if old HTML remains cached */
+.book-side-actions,
+.book-side-action,
+.book-rating-row,
+.book-rating-stars,
+#book-rating-text {
+    display: none !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 960px) {
+    .book-detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .book-cover-panel {
+        position: static;
+        order: 1;
+    }
+
+    .book-info-panel {
+        order: 2;
+    }
+
+    .book-cover-card {
+        min-height: 380px;
+    }
+
+    .book-cover-image {
+        max-height: 350px;
+    }
+}
+
+@media (max-width: 700px) {
+    .book-detail-page {
+        padding: 24px 14px 56px;
+    }
+
+    .book-breadcrumb {
+        justify-content: flex-start;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 4px;
+    }
+
+    .book-cover-card {
+        min-height: 330px;
+        padding: 16px;
+        border-radius: 24px;
+    }
+
+    .book-cover-image {
+        max-height: 300px;
+    }
+
+    .book-cover-fallback {
+        width: 170px;
+        height: 240px;
+    }
+
+    .book-main-info h1 {
+        font-size: 2rem;
+    }
+
+    .book-description {
+        font-size: 0.9rem;
+        line-height: 2;
+    }
+
+    .book-person-card {
+        grid-template-columns: 54px minmax(0, 1fr);
+    }
+
+    .book-person-action {
+        grid-column: 1 / -1;
+        padding-right: 68px;
+    }
+
+    .book-person-avatar {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+    }
+
+    .book-meta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .book-buy-box {
+        min-height: 184px;
+    }
+
+    .book-price-block {
+        padding-top: 42px;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .book-version-switch {
+        left: 50%;
+        width: 176px;
+        height: 32px;
+        transform: translateX(-50%);
+    }
+
+    .book-version-option {
+        font-size: 0.62rem;
+    }
+
+    .book-price-row {
+        justify-content: center;
+    }
+
+    .book-version-note {
+        text-align: center;
+    }
+
+    .book-buy-actions,
+    .book-review-form-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .book-add-cart-button,
+    .book-cart-link,
+    .book-review-submit,
+    .book-review-cancel {
+        width: 100%;
+    }
+
+    #book-price {
+        font-size: 1.35rem;
+    }
+
+    .book-review-summary-row {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .book-add-review-inline {
+        width: 100%;
+    }
+
+    .book-comments-section {
+        padding: 18px;
+        border-radius: 24px;
+    }
+
+    .book-comments-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .book-add-review-toggle {
+        width: 100%;
+    }
+
+    .book-review-card {
+        grid-template-columns: 1fr;
+    }
+
+    .book-review-avatar {
+        justify-self: start;
+    }
+
+    .book-review-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* =========================================================
+   ONLINE BOOK ACCESS
+========================================================= */
+
+.book-online-box {
+    padding: 22px;
+    display: grid;
+    gap: 18px;
+    border-radius: 24px;
+    background:
+        linear-gradient(135deg, rgba(16, 165, 165, 0.12), rgba(16, 165, 165, 0.055)),
+        var(--book-card);
+    border: 1px solid rgba(16, 165, 165, 0.22);
+}
+
+.book-online-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.book-online-head div {
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.book-online-head span {
+    color: var(--book-text-soft);
+    font-size: 0.78rem;
+    font-weight: 850;
+}
+
+.book-online-head strong {
+    color: var(--book-text-main);
+    font-size: 1rem;
+    font-weight: 950;
+    line-height: 1.45;
+}
+
+.book-online-head p {
+    min-width: 58px;
+    min-height: 34px;
+    margin: 0;
+    padding: 6px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: var(--book-cyan);
+    background: rgba(16, 165, 165, 0.1);
+    border: 1px solid rgba(16, 165, 165, 0.22);
+    font-size: 0.78rem;
+    font-weight: 950;
+}
+
+.book-online-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.book-online-button {
+    min-width: 150px;
+    height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 14px;
+    cursor: pointer;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 950;
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        opacity 0.22s ease;
+}
+
+.book-online-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.book-online-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.book-online-buy-button {
+    background: linear-gradient(135deg, var(--book-orange-3), var(--book-orange), #923b00);
+    box-shadow: 0 14px 28px rgba(196, 85, 0, 0.22);
+}
+
+.book-online-premium-button {
+    background: linear-gradient(135deg, #13c6c6, var(--book-cyan), #087f8c);
+    box-shadow: 0 14px 28px rgba(16, 165, 165, 0.2);
+}
+
+.book-online-read-button {
+    background: linear-gradient(135deg, #5d88ff, #3457d5);
+    box-shadow: 0 14px 28px rgba(52, 87, 213, 0.2);
+}
+
+.book-online-message {
+    margin: 0;
+    color: var(--book-text-soft);
+    font-size: 0.84rem;
+    font-weight: 800;
+    line-height: 1.9;
+}
+
+@media (max-width: 700px) {
+    .book-online-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .book-online-button {
+        width: 100%;
+    }
+}

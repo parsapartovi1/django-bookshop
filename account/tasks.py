@@ -1,3 +1,5 @@
+#CELERY CONFIGURATION
+
 import requests
 
 from celery import shared_task

@@ -1,0 +1,147 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    کتاب‌های من | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'account/css/set-profile.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'account/css/downloads.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="set-profile-page downloads-page"
+    id="downloads-page"
+    data-my-online-books-api="/account/api/my-online-books/"
+    data-delete-selected-api="/account/api/my-online-books/delete-selected/"
+    data-login-url="/account/login/"
+    data-home-url="/ketabook/"
+>
+
+    <div class="profile-dashboard-layout">
+
+        <div class="profile-window downloads-window">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-header-row downloads-header-row">
+
+                <div class="profile-heading">
+                    <h1>کتاب‌های من</h1>
+                    <p id="downloads-count-label">در حال دریافت کتاب‌های آنلاین شما...</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="downloads-delete-selected-button"
+                    id="downloads-delete-selected-button"
+                    disabled
+                >
+                    حذف انتخاب‌شده‌ها
+                </button>
+
+            </div>
+
+            <div
+                class="downloads-status"
+                id="downloads-status"
+                role="status"
+                aria-live="polite"
+                hidden
+            ></div>
+
+            <section class="downloads-toolbar">
+
+                <div class="downloads-toolbar-text">
+                    <strong>کتاب‌های آنلاین</strong>
+                    <span>
+                        می‌توانید با هر بار انتخاب حداکثر ۱۰ کتاب را از لیست کتاب‌های خود حذف کنید.
+                    </span>
+                </div>
+
+                <div class="downloads-selected-counter" id="downloads-selected-counter">
+                    ۰ انتخاب شده
+                </div>
+
+            </section>
+
+            <section class="downloads-list-panel">
+
+                <div class="downloads-items-grid" id="downloads-items-grid"></div>
+
+                <div class="downloads-empty-state" id="downloads-empty-state" hidden>
+
+                    <div class="downloads-empty-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H21"></path>
+                            <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H21v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>
+                            <path d="M8 6h8"></path>
+                            <path d="M8 10h6"></path>
+                        </svg>
+                    </div>
+
+                    <h2>هنوز کتاب آنلاینی ندارید</h2>
+
+                    <p>
+                        بعد از خرید کتاب آنلاین، کتاب‌های شما اینجا نمایش داده می‌شوند.
+                    </p>
+
+                    <a href="/ketabook/" class="downloads-empty-link">
+                        مشاهده کتاب‌ها
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        {% with side_nav_active="downloads" %}
+            {% include "partials/side-nav.html" %}
+        {% endwith %}
+
+        <template id="download-book-template">
+            <article class="download-book-card" data-online-book-card>
+
+                <label class="download-select-box">
+                    <input type="checkbox" data-select-online-book>
+                    <span></span>
+                </label>
+
+                <a href="#" class="download-book-cover" data-online-book-link>
+                    <img src="" alt="" data-book-cover hidden>
+                    <span class="download-book-cover-fallback" data-book-cover-fallback>کتابوک</span>
+                </a>
+
+                <div class="download-book-info">
+
+                    <a href="#" class="download-book-title" data-book-title>
+                        نام کتاب
+                    </a>
+
+                    <p class="download-book-author" data-book-author>
+                        نویسنده نامشخص
+                    </p>
+
+                    <div class="download-book-meta">
+                        <span data-online-book-format>فرمت نامشخص</span>
+                        <span data-online-book-date>---</span>
+                    </div>
+
+                </div>
+
+            </article>
+        </template>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'account/js/downloads.js' %}?v=1" defer></script>
+{% endblock %}

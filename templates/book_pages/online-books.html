@@ -1,0 +1,229 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    کتاب‌های آنلاین | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'catalog/css/online-books.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="online-books-page"
+    id="online-books-page"
+    data-online-books-api="/catalog/api/online-books/"
+    data-books-api="/catalog/api/books/"
+    data-genres-api="/catalog/api/genres/choices/"
+    data-home-url="/ketabook/"
+>
+
+    <div class="online-books-layout">
+
+        <aside class="online-books-sidebar">
+
+            <div class="online-books-sidebar-head">
+                <h2>دسته بندی کتاب‌ها</h2>
+                <p>فقط کتاب‌های آنلاین</p>
+            </div>
+
+            <nav
+                class="online-books-genres-list"
+                id="online-books-genres-list"
+                aria-label="دسته‌بندی کتاب‌های آنلاین"
+            >
+                <button
+                    type="button"
+                    class="online-books-genre-link is-active"
+                    data-online-genre="all"
+                >
+                    <span>همه کتاب‌های آنلاین</span>
+
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                        <path d="M8 20h8"></path>
+                        <path d="M12 16v4"></path>
+                    </svg>
+                </button>
+            </nav>
+
+        </aside>
+
+        <main class="online-books-main">
+
+            <section class="online-books-hero">
+
+                <p class="online-books-eyebrow">
+                    کتاب آنلاین
+                </p>
+
+                <h1>
+                    بهترین و پرطرفدارترین کتاب‌های آنلاین
+                </h1>
+
+                <p>
+                    کتاب‌های آنلاین کتابوک را بر اساس دسته‌بندی، تخفیف و علاقه‌مندی خود پیدا کنید و از صفحه جزئیات کتاب وارد مطالعه آنلاین شوید.
+                </p>
+
+            </section>
+
+            <div
+                class="online-books-status"
+                id="online-books-status"
+            >
+                در حال دریافت کتاب‌های آنلاین...
+            </div>
+
+            <section
+                class="online-books-section online-books-discount-section"
+                id="online-books-discount-section"
+                hidden
+            >
+
+                <header class="online-books-section-head">
+
+                    <div>
+                        <p>پیشنهاد ویژه</p>
+                        <h2>کتاب‌های آنلاین تخفیف‌دار</h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="online-books-see-all"
+                        id="online-books-discount-see-all"
+                    >
+                        مشاهده همه
+                    </button>
+
+                </header>
+
+                <div
+                    class="online-books-grid"
+                    id="online-books-discount-grid"
+                ></div>
+
+            </section>
+
+            <div
+                class="online-books-sections"
+                id="online-books-sections"
+            ></div>
+
+            <div
+                class="online-books-empty-state"
+                id="online-books-empty-state"
+                hidden
+            >
+
+                <div class="online-books-empty-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                        <path d="M8 20h8"></path>
+                        <path d="M12 16v4"></path>
+                    </svg>
+                </div>
+
+                <h2>
+                    کتاب آنلاینی پیدا نشد
+                </h2>
+
+                <p>
+                    بعد از اضافه شدن کتاب‌های آنلاین، این بخش نمایش داده می‌شود.
+                </p>
+
+                <a href="/ketabook/" class="online-books-empty-link">
+                    بازگشت به خانه
+                </a>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <template id="online-book-card-template">
+
+        <article class="online-book-card" data-online-book-card>
+
+            <a href="#" class="online-book-link" data-online-book-link>
+
+                <div class="online-book-cover">
+
+                    <img
+                        src=""
+                        alt=""
+                        data-online-book-cover
+                        hidden
+                    >
+
+                    <div
+                        class="online-book-cover-fallback"
+                        data-online-book-cover-fallback
+                    >
+                        کتابوک
+                    </div>
+
+                    <span
+                        class="online-book-discount-badge"
+                        data-online-book-discount-badge
+                        hidden
+                    >
+                        ٪۰
+                    </span>
+
+                    <span class="online-book-type-badge" title="کتاب آنلاین">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                            <path d="M8 20h8"></path>
+                            <path d="M12 16v4"></path>
+                        </svg>
+                    </span>
+
+                </div>
+
+                <div class="online-book-body">
+
+                    <h3 data-online-book-title>
+                        نام کتاب
+                    </h3>
+
+                    <p data-online-book-author>
+                        نویسنده نامشخص
+                    </p>
+
+                    <div class="online-book-price-row">
+
+                        <span
+                            class="online-book-price"
+                            data-online-book-price
+                        >
+                            ۰ تومان
+                        </span>
+
+                        <span
+                            class="online-book-old-price"
+                            data-online-book-old-price
+                            hidden
+                        >
+                            ۰ تومان
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </article>
+
+    </template>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'catalog/js/online-books.js' %}?v=1" defer></script>
+{% endblock %}

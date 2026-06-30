@@ -7,18 +7,22 @@ from .views import (
     VerifyOTPViewSet,
     SetProfileViewSet,
     ReviewViewSet,
+    FactorViewSet,
+UserOnlineBookViewSet
+
 )
+
 
 router = DefaultRouter()
 router.register("api/send-otp", GenerateOTPViewSet, basename="send-otp")
 router.register("api/verify-otp", VerifyOTPViewSet, basename="verify-otp")
 router.register("api/set-profile", SetProfileViewSet, basename="set-profile")
 router.register("api/review", ReviewViewSet, basename="review-act")
+router.register("api/factors", FactorViewSet, basename="factors")
+router.register("api/my-online-books", UserOnlineBookViewSet, basename="my-online-books")
+
+
 
 urlpatterns = [
     path("", include(router.urls)),
-
-    path("login/", TemplateView.as_view(template_name="login.html"), name="account-login"),
-    path("set-profile/", TemplateView.as_view(template_name="set-profile.html"), name="set-profile"),
-    path("profile/", TemplateView.as_view(template_name="set-profile.html"), name="account-profile"),
 ]

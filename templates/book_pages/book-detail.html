@@ -1,0 +1,387 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    جزئیات کتاب | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'catalog/css/book-detail.css' %}?v=15">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="book-detail-page"
+    id="book-detail-page"
+    data-book-api-base="/catalog/api/books/"
+    data-author-api-base="/catalog/api/authors/"
+    data-review-api="/account/api/review/"
+    data-cart-add-api="/cart/api/carts/add-item/"
+    data-online-books-api="/catalog/api/online-books/"
+    data-login-url="/account/login/"
+    data-cart-url="/cart/"
+    data-home-url="/ketabook/"
+>
+
+    <div class="book-detail-shell">
+
+        <nav class="book-breadcrumb">
+            <a href="/ketabook/">کتابوک</a>
+            <span>/</span>
+            <a href="/ketabook/">کتاب‌ها</a>
+            <span>/</span>
+            <strong id="book-breadcrumb-title">جزئیات کتاب</strong>
+        </nav>
+
+        <div class="book-detail-layout">
+
+            <!-- ================= COVER ================= -->
+            <aside class="book-cover-panel">
+
+                <div class="book-cover-card">
+
+                    <img
+                        src=""
+                        alt=""
+                        id="book-cover"
+                        class="book-cover-image"
+                        hidden
+                    >
+
+                    <div class="book-cover-fallback" id="book-cover-fallback">
+                        کتابوک
+                    </div>
+
+                    <span class="book-discount-badge" id="book-discount-badge" hidden>
+                        ٪۰
+                    </span>
+
+                </div>
+
+            </aside>
+
+
+            <!-- ================= INFO ================= -->
+            <article class="book-info-panel">
+
+                <div class="book-main-info">
+
+                    <p class="book-genre-label" id="book-top-genre">
+                        ---
+                    </p>
+
+                    <h1 id="book-title">
+                        در حال دریافت اطلاعات کتاب...
+                    </h1>
+
+                    <p class="book-description" id="book-description">
+                        لطفا چند لحظه صبر کنید.
+                    </p>
+
+                </div>
+
+
+                <!-- ================= AUTHOR / PUBLISHER ================= -->
+                <div class="book-people-grid">
+
+                    <a
+                        href="#"
+                        class="book-person-card book-author-card"
+                        id="book-author-card"
+                    >
+
+                        <div class="book-person-avatar" id="book-author-avatar">
+                            <img src="" alt="" id="book-author-image" hidden>
+                            <span id="book-author-fallback">ن</span>
+                        </div>
+
+                        <div class="book-person-info">
+                            <span>نویسنده</span>
+                            <strong id="book-author-name">---</strong>
+                        </div>
+
+                        <span class="book-person-action">
+                            مشاهده نویسنده
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="#"
+                        class="book-person-card book-publisher-card"
+                        id="book-publisher-card"
+                        hidden
+                    >
+
+                        <div class="book-person-avatar book-publisher-avatar" id="book-publisher-avatar">
+                            <img src="" alt="" id="book-publisher-image" hidden>
+                            <span id="book-publisher-fallback">ن</span>
+                        </div>
+
+                        <div class="book-person-info">
+                            <span>ناشر</span>
+                            <strong id="book-publisher-name">---</strong>
+                        </div>
+
+                        <span class="book-person-action">
+                            مشاهده ناشر
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ================= META ================= -->
+                <div class="book-meta-grid">
+
+                    <div class="book-meta-card">
+                        <span>زبان</span>
+                        <strong id="book-language">---</strong>
+                    </div>
+
+                    <div class="book-meta-card">
+                        <span>سطح</span>
+                        <strong id="book-level">---</strong>
+                    </div>
+
+                    <div class="book-meta-card">
+                        <span>ژانر</span>
+                        <strong id="book-genre">---</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- ================= BUY BOX ================= -->
+                <section class="book-buy-box is-physical" id="book-buy-box">
+
+                    <div class="book-price-block">
+
+                        <div
+                            class="book-version-switch is-physical"
+                            id="book-version-switch"
+                            role="tablist"
+                            aria-label="انتخاب نسخه کتاب"
+                        >
+
+                            <button
+                                type="button"
+                                class="book-version-option"
+                                id="book-version-online"
+                                data-book-version="online"
+                                role="tab"
+                                aria-selected="false"
+                                disabled
+                            >
+                                نسخه آنلاین
+                            </button>
+
+                            <button
+                                type="button"
+                                class="book-version-option is-active"
+                                id="book-version-physical"
+                                data-book-version="physical"
+                                role="tab"
+                                aria-selected="true"
+                            >
+                                نسخه چاپی
+                            </button>
+
+                            <span class="book-version-switch-thumb" aria-hidden="true"></span>
+
+                        </div>
+
+                        <div class="book-price-row">
+                            <del id="book-old-price" hidden>۰ تومان</del>
+                            <strong id="book-price">۰ تومان</strong>
+                        </div>
+
+                        <p class="book-version-note" id="book-version-note">
+                            قیمت نسخه چاپی
+                        </p>
+
+                    </div>
+
+                    <div class="book-buy-actions">
+
+                        <button
+                            type="button"
+                            class="book-add-cart-button"
+                            id="book-add-cart-button"
+                        >
+                            افزودن به سبد
+                        </button>
+
+                        <a href="/cart/" class="book-cart-link" id="book-cart-link">
+                            مشاهده سبد
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ================= ONLINE BOOK ACCESS ================= -->
+                <section class="book-online-box" id="book-online-box" hidden>
+
+                    <div class="book-online-head">
+
+                        <div>
+                            <span>نسخه آنلاین</span>
+                            <strong id="book-online-title">کتاب آنلاین</strong>
+                        </div>
+
+                        <p id="book-online-format">PDF</p>
+
+                    </div>
+
+                    <div class="book-online-actions" id="book-online-actions">
+
+                        <button
+                            type="button"
+                            class="book-online-button book-online-premium-button"
+                            id="book-online-premium-button"
+                            hidden
+                        >
+                            دسترسی با اشتراک
+                        </button>
+
+                        <button
+                            type="button"
+                            class="book-online-button book-online-read-button"
+                            id="book-online-read-button"
+                            hidden
+                        >
+                            خواندن کتاب آنلاین
+                        </button>
+
+                    </div>
+
+                    <p class="book-online-message" id="book-online-message">
+                        ---
+                    </p>
+
+                </section>
+
+
+                <!-- ================= REVIEW SUMMARY ================= -->
+                <section class="book-review-summary-row">
+
+                    <div class="book-review-summary-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+                        </svg>
+                    </div>
+
+                    <span id="book-review-summary-text">
+                        بدون نظر
+                    </span>
+
+                    <button
+                        type="button"
+                        class="book-add-review-inline"
+                        id="book-add-review-inline"
+                        data-add-review-button
+                    >
+                        افزودن نظر
+                    </button>
+
+                </section>
+
+
+                <div
+                    class="book-status-message"
+                    id="book-status-message"
+                    hidden
+                ></div>
+
+            </article>
+
+        </div>
+
+
+        <!-- ================= COMMENTS ================= -->
+        <section class="book-comments-section" id="book-comments-section">
+
+            <div class="book-comments-header">
+
+                <div>
+                    <h2>نظرهای کاربران</h2>
+                    <p id="book-comments-subtitle">نظرهای ثبت شده برای این کتاب</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="book-add-review-toggle"
+                    id="book-add-review-toggle"
+                    data-add-review-button
+                >
+                    افزودن نظر
+                </button>
+
+            </div>
+
+
+            <form class="book-review-form" id="book-review-form" hidden>
+
+                <label for="book-review-text">
+                    نظر شما
+                </label>
+
+                <textarea
+                    id="book-review-text"
+                    name="text"
+                    rows="5"
+                    placeholder="نظر خود را درباره این کتاب بنویسید..."
+                    required
+                ></textarea>
+
+                <div class="book-review-form-actions">
+
+                    <button
+                        type="submit"
+                        class="book-review-submit"
+                        id="book-review-submit"
+                    >
+                        ثبت نظر
+                    </button>
+
+                    <button
+                        type="button"
+                        class="book-review-cancel"
+                        id="book-review-cancel"
+                    >
+                        انصراف
+                    </button>
+
+                </div>
+
+                <div
+                    class="book-review-form-status"
+                    id="book-review-form-status"
+                    hidden
+                ></div>
+
+            </form>
+
+
+            <div class="book-reviews-list" id="book-reviews-list"></div>
+
+            <div class="book-reviews-empty" id="book-reviews-empty" hidden>
+                هنوز نظری برای این کتاب ثبت نشده است.
+            </div>
+
+        </section>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'catalog/js/book-detail.js' %}?v=14" defer></script>
+{% endblock %}

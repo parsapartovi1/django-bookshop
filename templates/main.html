@@ -15,7 +15,7 @@
 
     <meta name="description" content="کتابوک - فروشگاه آنلاین کتاب">
 
-    <link rel="stylesheet" href="{% static 'catalog/css/main.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'catalog/css/main.css' %}?v=7">
 
     {% block extra_head %}
     {% endblock %}
@@ -107,6 +107,7 @@
 
     <!-- ================= NAVBAR ================= -->
     <header class="main-header">
+
         <nav class="navbar">
 
             <div class="navbar-brand">
@@ -124,6 +125,7 @@
                     class="nav-icon-button"
                     id="category-button"
                     aria-expanded="false"
+                    aria-controls="category-menu"
                 >
                     <svg class="site-icon">
                         <use href="#icon-category"></use>
@@ -133,7 +135,12 @@
             </div>
 
             <div class="navbar-item navbar-online-books">
-                <a href="/ketabook/online-books/" class="nav-link">
+                <a
+                    href="/ketabook/online-books/"
+                    class="nav-link"
+                    id="online-books-link"
+                    data-online-books-url="/ketabook/online-books/"
+                >
                     <svg class="site-icon">
                         <use href="#icon-online"></use>
                     </svg>
@@ -153,7 +160,7 @@
                         name="q"
                         id="navbar-search-input"
                         class="search-input"
-                        placeholder="جستجوی کتاب، نویسنده، ژانر..."
+                        placeholder="جستجوی کتاب..."
                         autocomplete="off"
                     >
 
@@ -163,11 +170,21 @@
                         </svg>
                     </button>
                 </form>
+
+                <div
+                    class="search-results-panel"
+                    id="navbar-search-results"
+                    hidden
+                >
+                    <div class="search-results-empty">
+                        شروع به جستجوی کتاب کنید...
+                    </div>
+                </div>
             </div>
 
             <div class="navbar-item navbar-cart">
                 <a
-                    href="/ketabook/cart/"
+                    href="account/cart/"
                     class="nav-link cart-link"
                     id="cart-link"
                     aria-label="سبد خرید"
@@ -212,6 +229,28 @@
             </div>
 
         </nav>
+
+
+        <!-- ================= BACKEND GENRE CATEGORY MENU ================= -->
+        <div
+            class="category-menu"
+            id="category-menu"
+            data-category-menu
+            data-category-api="/catalog/api/genres/choices/"
+            aria-label="دسته‌بندی کتاب‌ها"
+        >
+            <div class="category-menu-head">
+                <strong>دسته‌بندی کتاب‌ها</strong>
+                <small>ژانر مورد نظر را انتخاب کنید</small>
+            </div>
+
+            <div class="category-menu-list" id="category-menu-list">
+                <div class="category-menu-loading">
+                    در حال دریافت دسته‌بندی‌ها...
+                </div>
+            </div>
+        </div>
+
     </header>
 
 
@@ -248,18 +287,19 @@
                     <li><a href="/ketabook/categories/">دسته بندی‌ها</a></li>
                     <li><a href="/ketabook/discounts/">تخفیف خورده‌ها</a></li>
                     <li><a href="/ketabook/online-books/">کتاب‌های آنلاین</a></li>
-                    <li><a href="/ketabook/cart/">سبد خرید</a></li>
+                    <li><a href="/cart/">سبد خرید</a></li>
                 </ul>
             </div>
 
             <div class="footer-support">
-                <h3 class="footer-title">پشتیبانی</h3>
+                <h3 class="footer-title">حساب کاربری</h3>
 
                 <ul class="footer-list">
-                    <li><a href="/ketabook/contact/">تماس با ما</a></li>
-                    <li><a href="/ketabook/about/">درباره کتابوک</a></li>
-                    <li><a href="/ketabook/rules/">قوانین و شرایط</a></li>
-                    <li><a href="/ketabook/faq/">سوالات متداول</a></li>
+                    <li><a href="/account/login/">ورود</a></li>
+                    <li><a href="/account/profile/">پروفایل</a></li>
+                    <li><a href="/cart/">سبد خرید</a></li>
+                    <li><a href="/payment/wallet/">کیف پول</a></li>
+                    <li><a href="/payment/premium/">اشتراک ویژه</a></li>
                 </ul>
             </div>
 
@@ -304,7 +344,7 @@
 </div>
 
 
-<script src="{% static 'catalog/js/main.js' %}?v=5" defer></script>
+<script src="{% static 'catalog/js/main.js' %}?v=20" defer></script>
 
 {% block extra_scripts %}
 {% endblock %}

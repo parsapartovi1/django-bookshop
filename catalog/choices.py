@@ -1,3 +1,5 @@
+#BOOK LEVELS :
+
 KID = "kid"
 MIDDLE_GRADE = "middle_grade"
 TEEN = "teen"
@@ -13,6 +15,9 @@ LEVEL_CHOICES = (
 )
 
 
+
+#BOOK LANGUAGES :
+
 ENGLISH = "english"
 SPANISH = "spanish"
 FARSI = "farsi"
@@ -25,6 +30,9 @@ LANGUAGE_CHOICES = (
     (FRENCH, "French"),
 )
 
+
+
+#BOOK CHOICES :
 
 ADVENTURE = "adventure"
 FANTASY = "fantasy"
@@ -57,6 +65,9 @@ GENRE_CHOICES = (
 )
 
 
+
+#PAYMENT WAY :
+
 PREMIUM = "premium"
 CASH = "cash"
 PREMUIM_CASH = "premium and cash"
@@ -67,12 +78,17 @@ ACCESS_TYPE_CHOICES = (
     (PREMUIM_CASH, "Premium and Cash"),
 )
 
+
+
+#ONLINE BOOK FORMAT :
 PDF = "pdf"
 EPUB = "epub"
 DOCX = "docx"
+TXT = "txt"
 
 FORMAT_CHOICES = (
     (PDF, "PDF"),
+    (TXT, "txt"),
     (EPUB, "EPUB"),
     (DOCX, "DocX"),
 )

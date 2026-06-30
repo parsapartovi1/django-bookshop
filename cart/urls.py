@@ -11,6 +11,4 @@ router.register("carts", CartViewSet, basename="carts")
 
 urlpatterns = [
     path("api/", include(router.urls)),
-
-    path("", TemplateView.as_view(template_name="cart.html"), name="cart-page"),
 ]

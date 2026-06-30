@@ -1,0 +1,203 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    اشتراک ویژه | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'account/css/set-profile.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'payment/css/premium.css' %}?v=5">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="set-profile-page premium-page"
+    id="premium-page"
+    data-premium-api="/payment/api/premium/"
+    data-premium-buy-api="/payment/api/premium/buy/"
+    data-wallet-api="/payment/api/wallet/"
+    data-cart-api="/cart/api/carts/"
+    data-home-url="/ketabook/"
+    data-login-url="/account/login/"
+    data-profile-url="/account/profile/"
+    data-cart-url="/cart/"
+    data-wallet-url="/payment/wallet/"
+    data-premium-url="/payment/premium/"
+>
+
+    <div class="profile-dashboard-layout">
+
+        <!-- ================= PREMIUM WINDOW ================= -->
+        <main class="profile-window premium-window">
+
+            <div class="profile-cover premium-cover"></div>
+
+            <header class="profile-header-row premium-window-header">
+
+                <div class="profile-heading premium-heading">
+                    <p class="premium-eyebrow">اشتراک ویژه</p>
+                    <h1>حساب ویژه کتابوک</h1>
+                    <p id="premium-subtitle">در حال دریافت وضعیت اشتراک شما...</p>
+                </div>
+
+                <a href="/payment/wallet/" class="premium-wallet-link">
+                    شارژ کیف پول
+                </a>
+
+            </header>
+
+            <section class="premium-status-grid">
+
+                <article class="premium-status-card premium-status-main">
+                    <span>وضعیت اشتراک</span>
+                    <strong id="premium-current-status">در حال دریافت...</strong>
+                </article>
+
+                <article class="premium-status-card">
+                    <span>تاریخ پایان</span>
+                    <strong id="premium-expiration">---</strong>
+                </article>
+
+                <article class="premium-status-card">
+                    <span>موجودی کیف پول</span>
+                    <strong id="premium-wallet-balance">۰ تومان</strong>
+                </article>
+
+            </section>
+
+            <section class="premium-guide-box">
+
+                <div class="premium-guide-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 18.8 5.8 22 7 15.2l-5-4.9 6.9-1L12 3z"></path>
+                    </svg>
+                </div>
+
+                <p>
+                    با خرید اشتراک ویژه می‌توانید به کتاب های آنلاین دسترسی داشته باشید. پرداخت اشتراک از موجودی کیف پول انجام می‌شود؛ اگر موجودی کافی ندارید ابتدا کیف پول خود را شارژ کنید.
+                </p>
+
+            </section>
+
+            <section class="premium-plans-panel">
+
+                <div class="premium-section-title">
+                    <h2>انتخاب پلن اشتراک</h2>
+                </div>
+
+                <div class="premium-plans-grid" id="premium-plans-grid">
+
+                    <button
+                        type="button"
+                        class="premium-plan-card"
+                        data-months="1"
+                        data-price="100000"
+                    >
+                        <span class="plan-badge">شروع سریع</span>
+                        <strong>۱ ماهه</strong>
+                        <small>۱۰۰,۰۰۰ تومان</small>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="premium-plan-card"
+                        data-months="3"
+                        data-price="300000"
+                    >
+                        <span class="plan-badge">محبوب</span>
+                        <strong>۳ ماهه</strong>
+                        <small>۳۰۰,۰۰۰ تومان</small>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="premium-plan-card"
+                        data-months="6"
+                        data-price="600000"
+                    >
+                        <span class="plan-badge">به‌صرفه</span>
+                        <strong>۶ ماهه</strong>
+                        <small>۶۰۰,۰۰۰ تومان</small>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="premium-plan-card"
+                        data-months="12"
+                        data-price="1200000"
+                    >
+                        <span class="plan-badge">سالانه</span>
+                        <strong>۱۲ ماهه</strong>
+                        <small>۱,۲۰۰,۰۰۰ تومان</small>
+                    </button>
+
+                </div>
+
+                <div class="premium-selected-box" id="premium-selected-box" hidden>
+                    <span>پلن انتخاب شده:</span>
+                    <strong id="premium-selected-text">---</strong>
+                </div>
+
+                <div
+                    class="premium-status-message"
+                    id="premium-status-message"
+                    role="status"
+                    aria-live="polite"
+                    hidden
+                ></div>
+
+                <div class="premium-actions">
+
+                    <button
+                        type="button"
+                        class="premium-buy-button"
+                        id="premium-buy-button"
+                        disabled
+                    >
+                        <span class="button-text">خرید اشتراک</span>
+                        <span class="button-loader" aria-hidden="true"></span>
+                    </button>
+
+                    <a href="/payment/wallet/" class="premium-secondary-link">
+                        افزایش موجودی کیف پول
+                    </a>
+
+                </div>
+
+            </section>
+
+            <section class="premium-login-state" id="premium-login-state" hidden>
+
+                <div class="premium-login-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 21a8 8 0 0 1 16 0"></path>
+                    </svg>
+                </div>
+
+                <h2>برای مشاهده اشتراک ویژه وارد حساب کاربری شوید</h2>
+                <p>بعد از ورود، وضعیت واقعی اشتراک و موجودی کیف پول شما نمایش داده می‌شود.</p>
+
+                <a href="/account/login/" class="premium-login-link">
+                    حساب کاربری
+                </a>
+
+            </section>
+
+        </main>
+
+        {% with side_nav_active="premium" %}
+            {% include "partials/side-nav.html" %}
+        {% endwith %}
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'payment/js/premium.js' %}?v=1" defer></script>
+{% endblock %}

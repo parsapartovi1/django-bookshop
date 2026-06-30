@@ -1,0 +1,256 @@
+.profile-dashboard-layout {
+    width: min(1160px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 76px;
+    gap: 20px;
+    align-items: stretch;
+    direction: ltr;
+}
+
+.profile-dashboard-layout > *:not(.profile-side-navbar) {
+    min-width: 0;
+    direction: rtl;
+}
+
+.profile-side-navbar {
+    width: 76px;
+    min-height: 720px;
+    padding: 18px 12px;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 22px;
+    border-radius: 28px;
+    background:
+        linear-gradient(180deg, rgba(255, 122, 24, 0.08), transparent 22%),
+        rgba(18, 18, 21, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition:
+        width 0.28s ease,
+        box-shadow 0.28s ease;
+}
+
+.profile-side-navbar:hover,
+.profile-side-navbar:focus-within {
+    width: 310px;
+    box-shadow:
+        0 34px 90px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.profile-side-logo {
+    width: 46px;
+    min-width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    align-self: center;
+    border-radius: 15px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 950;
+    background: linear-gradient(135deg, #ff7a18, #c45500);
+    box-shadow: 0 14px 28px rgba(196, 85, 0, 0.32);
+}
+
+.profile-side-menu {
+    display: grid;
+    gap: 12px;
+}
+
+.profile-side-link {
+    min-width: 52px;
+    height: 52px;
+    padding: 0 13px;
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+    border-radius: 16px;
+    color: rgba(255, 255, 255, 0.58);
+    text-decoration: none;
+    background: transparent;
+    border: 1px solid transparent;
+    transition:
+        color 0.22s ease,
+        background 0.22s ease,
+        border-color 0.22s ease,
+        transform 0.22s ease;
+}
+
+.profile-side-link:hover,
+.profile-side-link.active {
+    color: #ffffff;
+    background: rgba(196, 85, 0, 0.2);
+    border-color: rgba(255, 122, 24, 0.16);
+}
+
+.profile-side-link:hover {
+    transform: translateY(-1px);
+}
+
+.profile-side-icon {
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    color: currentColor;
+}
+
+.profile-side-icon svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.profile-side-content {
+    min-width: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    display: grid;
+    gap: 4px;
+    direction: rtl;
+    text-align: right;
+    transition:
+        opacity 0.2s ease,
+        visibility 0.2s ease,
+        transform 0.2s ease;
+}
+
+.profile-side-navbar:hover .profile-side-content,
+.profile-side-navbar:focus-within .profile-side-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.profile-side-content strong {
+    color: currentColor;
+    font-size: 0.88rem;
+    font-weight: 950;
+    white-space: nowrap;
+}
+
+.profile-side-content small {
+    max-width: 190px;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.72rem;
+    font-weight: 750;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.profile-side-link.active .profile-side-content small,
+.profile-side-link:hover .profile-side-content small {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+/* =========================================================
+   LIGHT THEME SUPPORT
+========================================================= */
+
+html[data-theme="light"] .profile-side-navbar,
+body[data-theme="light"] .profile-side-navbar {
+    background:
+        linear-gradient(180deg, rgba(255, 122, 24, 0.08), transparent 22%),
+        rgba(255, 255, 255, 0.92);
+    border-color: rgba(31, 36, 48, 0.08);
+    box-shadow:
+        0 28px 70px rgba(42, 54, 70, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+html[data-theme="light"] .profile-side-link,
+body[data-theme="light"] .profile-side-link {
+    color: rgba(31, 36, 48, 0.52);
+}
+
+html[data-theme="light"] .profile-side-link:hover,
+html[data-theme="light"] .profile-side-link.active,
+body[data-theme="light"] .profile-side-link:hover,
+body[data-theme="light"] .profile-side-link.active {
+    color: #1f2430;
+    background: rgba(255, 122, 24, 0.13);
+    border-color: rgba(196, 85, 0, 0.13);
+}
+
+html[data-theme="light"] .profile-side-content small,
+body[data-theme="light"] .profile-side-content small {
+    color: rgba(31, 36, 48, 0.52);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+    .profile-dashboard-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        direction: rtl;
+    }
+
+    .profile-side-navbar {
+        width: 100%;
+        min-height: auto;
+        order: -1;
+        padding: 14px;
+        border-radius: 22px;
+    }
+
+    .profile-side-navbar:hover,
+    .profile-side-navbar:focus-within {
+        width: 100%;
+    }
+
+    .profile-side-logo {
+        display: none;
+    }
+
+    .profile-side-menu {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .profile-side-link {
+        height: auto;
+        min-height: 76px;
+        padding: 12px 10px;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .profile-side-content {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        text-align: center;
+    }
+
+    .profile-side-content strong,
+    .profile-side-content small {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 520px) {
+    .profile-side-menu {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

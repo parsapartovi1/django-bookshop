@@ -1,8 +1,8 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils import timezone
 
-from catalog.models import Book
 from account.models import User
-
 
 
 class Premium(models.Model):
@@ -13,8 +13,6 @@ class Premium(models.Model):
 
     premium_account = models.BooleanField(
         default=False,
-        blank=True,
-        null=True,
     )
 
     premium_expiration = models.DateTimeField(
@@ -23,11 +21,11 @@ class Premium(models.Model):
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
 
     class Meta:
@@ -36,19 +34,26 @@ class Premium(models.Model):
     def __str__(self):
         return f"{self.user.number} premium account"
 
+    @property
+    def is_active(self):
+        return bool(
+            self.premium_account
+            and self.premium_expiration
+            and self.premium_expiration > timezone.now()
+        )
 
 
 class Wallet(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='user_wallet',
+        related_name="user_wallet",
     )
 
     cart = models.ForeignKey(
         "cart.Cart",
         on_delete=models.CASCADE,
-        related_name='user_cart_wallet',
+        related_name="user_cart_wallet",
     )
 
     amount = models.DecimalField(
@@ -60,18 +65,73 @@ class Wallet(models.Model):
     premium = models.ForeignKey(
         Premium,
         on_delete=models.CASCADE,
-        related_name='user_premium',
+        related_name="user_premium",
     )
 
     created_at = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
     )
 
     class Meta:
         verbose_name = "2.users wallet"
 
+    def __str__(self):
+        return f"{self.user.number} - {self.amount}"
 
+
+class Discount(models.Model):
+    amount = models.PositiveSmallIntegerField(
+        verbose_name="discount percentage",
+        help_text="Enter percentage number 0-100",
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100),
+        ],
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="active",
+    )
+
+    start_time = models.DateTimeField(
+        verbose_name="start date time",
+        help_text="The time that the discount starts",
+        default=timezone.now,
+    )
+
+    expiration = models.DateTimeField(
+        verbose_name="expiration date time",
+        help_text="The time that the discount expires",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        verbose_name = "3.discounts"
+
+    def __str__(self):
+        return f"{self.amount}%"
+
+    @property
+    def is_currently_active(self):
+        now = timezone.now()
+
+        return bool(
+            self.is_active
+            and self.start_time
+            and self.expiration
+            and self.start_time <= now
+            and self.expiration > now
+            and 0 < self.amount <= 100
+        )

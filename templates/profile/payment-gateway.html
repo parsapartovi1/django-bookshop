@@ -1,0 +1,138 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    انتخاب درگاه بانکی | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'payment/css/payment-gateway.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="payment-gateway-page"
+    id="payment-gateway-page"
+    data-wallet-charge-api="/payment/api/wallet/charge/"
+    data-cart-api="/cart/api/carts/"
+    data-cart-add-item-api="/cart/api/carts/add-item/"
+    data-cart-checkout-api="/cart/api/carts/checkout-paid/"
+    data-wallet-url="/payment/wallet/"
+    data-cart-url="/cart/"
+    data-home-url="/ketabook/"
+    data-login-url="/account/login/"
+>
+
+    <div class="payment-gateway-window">
+
+        <header class="payment-gateway-header">
+            <p>پرداخت امن کتابوک</p>
+            <h1>درگاه بانکی خود را انتخاب کنید</h1>
+            <span id="payment-gateway-subtitle">
+                برای ادامه پرداخت، یکی از درگاه‌های زیر را انتخاب کنید.
+            </span>
+        </header>
+
+        <div
+            class="payment-gateway-status"
+            id="payment-gateway-status"
+            hidden
+        ></div>
+
+        <section class="payment-intent-card" id="payment-intent-card">
+
+            <div class="payment-intent-row">
+                <span>نوع پرداخت</span>
+                <strong id="payment-task-label">---</strong>
+            </div>
+
+            <div class="payment-intent-row" id="payment-wallet-amount-row" hidden>
+                <span>مبلغ شارژ کیف پول</span>
+
+                <div class="payment-amount-field">
+                    <input
+                        type="text"
+                        id="payment-wallet-amount"
+                        inputmode="numeric"
+                        placeholder="مثلا 100000"
+                    >
+                    <small>تومان</small>
+                </div>
+            </div>
+
+            <div class="payment-intent-row">
+                <span>مبلغ قابل پرداخت</span>
+                <strong id="payment-payable-amount">بعد از انتخاب عملیات مشخص می‌شود</strong>
+            </div>
+
+        </section>
+
+
+        <section class="payment-gateways-grid">
+
+            <button
+                type="button"
+                class="payment-gateway-card"
+                data-gateway="mellat"
+            >
+                <span class="payment-gateway-logo">
+                    <img
+                        src="{% static 'payment/melat.png' %}"
+                        alt="درگاه ملت"
+                    >
+                </span>
+
+                <span class="payment-gateway-info">
+                    <strong>درگاه ملت</strong>
+                    <small>پرداخت شبیه‌سازی‌شده</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="payment-gateway-card"
+                data-gateway="saman"
+            >
+                <span class="payment-gateway-logo">
+                    <img
+                        src="{% static 'payment/saman.png' %}"
+                        alt="درگاه سامان"
+                    >
+                </span>
+
+                <span class="payment-gateway-info">
+                    <strong>درگاه سامان</strong>
+                    <small>پرداخت شبیه‌سازی‌شده</small>
+                </span>
+            </button>
+
+        </section>
+
+
+        <footer class="payment-gateway-footer">
+
+            <a href="/ketabook/" class="payment-back-link" id="payment-back-link">
+                انصراف
+            </a>
+
+            <button
+                type="button"
+                class="payment-submit-button"
+                id="payment-submit-button"
+                disabled
+            >
+                رفتن به درگاه بانکی
+            </button>
+
+        </footer>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'payment/js/payment-gateway.js' %}?v=1" defer></script>
+{% endblock %}

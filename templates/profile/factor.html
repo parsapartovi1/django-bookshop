@@ -1,0 +1,233 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    فاکتورها | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'account/css/set-profile.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'account/css/factor.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="set-profile-page factor-page"
+    id="factor-page"
+    data-factor-api="/account/api/factors/"
+    data-profile-api="/account/api/set-profile/"
+    data-login-url="/account/login/"
+    data-home-url="/ketabook/"
+>
+
+    <div class="profile-dashboard-layout">
+
+        <!-- ================= FACTOR WINDOW ================= -->
+        <div class="profile-window factor-window">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-header-row factor-header-row">
+
+                <div class="profile-heading">
+                    <h1>فاکتورها</h1>
+                    <p id="factor-count-label">در حال دریافت فاکتورهای شما...</p>
+                </div>
+
+                <a href="/ketabook/" class="factor-home-link">
+                    بازگشت به کتاب‌ها
+                </a>
+
+            </div>
+
+            <div
+                class="factor-status"
+                id="factor-status"
+                role="status"
+                aria-live="polite"
+                hidden
+            ></div>
+
+            <!-- ================= FACTOR LIST ================= -->
+            <section class="factor-list-panel">
+
+                <div class="factor-list-head">
+                    <span>عنوان فاکتور</span>
+                    <span>نوع</span>
+                    <span>تاریخ</span>
+                    <span>مبلغ</span>
+                    <span>عملیات</span>
+                </div>
+
+                <div class="factor-items-list" id="factor-items-list"></div>
+
+                <div class="factor-empty-state" id="factor-empty-state" hidden>
+
+                    <div class="factor-empty-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 3h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2z"></path>
+                            <path d="M9 8h6"></path>
+                            <path d="M9 12h6"></path>
+                            <path d="M9 16h4"></path>
+                        </svg>
+                    </div>
+
+                    <h2>هنوز فاکتوری برای شما ثبت نشده است</h2>
+
+                    <p>
+                        بعد از خرید کتاب، شارژ کیف پول، خرید اشتراک ویژه یا خرید کتاب آنلاین، فاکتورهای شما اینجا نمایش داده می‌شوند.
+                    </p>
+
+                    <a href="/ketabook/" class="factor-empty-link">
+                        مشاهده کتاب‌ها
+                    </a>
+
+                </div>
+
+            </section>
+
+            <!-- ================= HIDDEN 4:3 FACTOR PAPER FOR IMAGE RENDERING ================= -->
+            <div class="factor-render-stage" aria-hidden="true">
+
+                <article class="factor-canvas-frame" id="factor-canvas-frame">
+
+                    <header class="factor-paper-header">
+
+                        <div class="factor-brand">
+                            <h1>کتابوک</h1>
+                            <p>مرجع تخصصی خرید کتاب و کتاب آنلاین</p>
+                        </div>
+
+                        <div class="factor-paper-meta">
+                            <span>شماره فاکتور</span>
+                            <strong id="paper-factor-number">---</strong>
+
+                            <span>تاریخ صدور</span>
+                            <strong id="paper-factor-date">---</strong>
+                        </div>
+
+                    </header>
+
+                    <section class="factor-paper-title">
+                        <h2 id="paper-factor-title">فاکتور خرید</h2>
+                        <p id="paper-factor-subtitle">جزئیات تراکنش شما در کتابوک</p>
+                    </section>
+
+                    <section class="factor-table-wrap">
+                        <table class="factor-paper-table" id="paper-factor-table">
+                            <thead>
+                                <tr>
+                                    <th>ردیف</th>
+                                    <th>نام محصول</th>
+                                    <th>قیمت</th>
+                                    <th>تعداد</th>
+                                    <th>تخفیف</th>
+                                    <th>تاریخ خرید</th>
+                                    <th>مبلغ نهایی</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="paper-factor-table-body"></tbody>
+                        </table>
+                    </section>
+
+                    <section class="factor-customer-note" id="paper-customer-note">
+                        <p>
+                            جناب آقای / خانم
+                            <strong id="paper-user-name">---</strong>
+                        </p>
+
+                        <p id="paper-user-address-row">
+                            به آدرس:
+                            <strong id="paper-user-address">---</strong>
+                        </p>
+
+                        <p>
+                            از خرید شما متشکریم
+                        </p>
+                    </section>
+
+                    <footer class="factor-paper-footer">
+
+                        <p class="factor-legal-note">
+                            این فاکتور در جهت اطمینان خریدار صادر شده و ارزش قانونی دیگری ندارد
+                        </p>
+
+                        <div class="factor-signatures">
+
+                            <div class="factor-signature-box">
+                                <span>امضای خریدار</span>
+                            </div>
+
+                            <div class="factor-signature-box">
+                                <span>امضای فرستنده</span>
+                            </div>
+
+                        </div>
+
+                    </footer>
+
+                </article>
+
+            </div>
+
+        </div>
+
+        {% with side_nav_active="factors" %}
+            {% include "partials/side-nav.html" %}
+        {% endwith %}
+
+        <!-- ================= FACTOR ITEM TEMPLATE ================= -->
+        <template id="factor-item-template">
+            <article class="factor-item" data-factor-item>
+
+                <div class="factor-item-main">
+                    <strong data-factor-title>فاکتور</strong>
+                    <small data-factor-description>جزئیات فاکتور</small>
+                </div>
+
+                <div class="factor-item-type" data-factor-type>
+                    ---
+                </div>
+
+                <div class="factor-item-date" data-factor-date>
+                    ---
+                </div>
+
+                <div class="factor-item-price" data-factor-price>
+                    ۰ تومان
+                </div>
+
+                <div class="factor-item-actions">
+
+                    <button
+                        type="button"
+                        class="factor-open-button"
+                        data-open-factor
+                    >
+                        مشاهده
+                    </button>
+
+                    <button
+                        type="button"
+                        class="factor-download-button"
+                        data-download-factor
+                    >
+                        دانلود
+                    </button>
+
+                </div>
+
+            </article>
+        </template>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'account/js/factor.js' %}?v=2" defer></script>
+{% endblock %}

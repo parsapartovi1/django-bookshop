@@ -1,0 +1,231 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    جستجوی کتاب | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'catalog/css/search.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="search-page"
+    id="search-page"
+    data-books-api="/catalog/api/books/"
+    data-online-books-api="/catalog/api/online-books/"
+    data-genres-api="/catalog/api/genres/choices/"
+    data-home-url="/ketabook/"
+>
+
+    <header class="search-hero">
+
+        <div class="search-hero-text">
+            <p class="search-eyebrow">جستجوی کتاب</p>
+
+            <h1 id="search-page-title">
+                نتیجه جستجو
+            </h1>
+
+            <p id="search-page-subtitle">
+                کتاب‌های مرتبط با نامی که جستجو کرده‌اید اینجا نمایش داده می‌شوند.
+            </p>
+        </div>
+
+    </header>
+
+    <section class="search-toolbar search-filter-toolbar">
+
+        <div class="search-count-box">
+            <span>تعداد نتیجه‌ها</span>
+            <strong id="search-results-count">۰</strong>
+        </div>
+
+        <form class="search-filter-form" id="search-filter-form">
+
+            <div class="search-filter-field">
+                <label for="search-genre-select">
+                    دسته بندی
+                </label>
+
+                <div class="search-filter-control">
+
+                    <select id="search-genre-select">
+                        <option value="">همه دسته‌بندی‌ها</option>
+                    </select>
+
+                    <div class="search-filter-stepper">
+                        <button
+                            type="button"
+                            data-step-select="search-genre-select"
+                            data-step-direction="up"
+                            aria-label="دسته‌بندی قبلی"
+                        >
+                            ▲
+                        </button>
+
+                        <button
+                            type="button"
+                            data-step-select="search-genre-select"
+                            data-step-direction="down"
+                            aria-label="دسته‌بندی بعدی"
+                        >
+                            ▼
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="search-filter-field">
+                <label for="search-sort-select">
+                    ترتیب
+                </label>
+
+                <div class="search-filter-control">
+
+                    <select id="search-sort-select">
+                        <option value="">ترتیب پیش‌فرض</option>
+                        <option value="newest">جدید ترین</option>
+                        <option value="oldest">قدیمی ترین</option>
+                    </select>
+
+                    <div class="search-filter-stepper">
+                        <button
+                            type="button"
+                            data-step-select="search-sort-select"
+                            data-step-direction="up"
+                            aria-label="ترتیب قبلی"
+                        >
+                            ▲
+                        </button>
+
+                        <button
+                            type="button"
+                            data-step-select="search-sort-select"
+                            data-step-direction="down"
+                            aria-label="ترتیب بعدی"
+                        >
+                            ▼
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="search-filter-field">
+                <label for="search-author-input">
+                    نویسنده
+                </label>
+
+                <div class="search-filter-control search-filter-author-control">
+                    <input
+                        type="text"
+                        id="search-author-input"
+                        placeholder="نام نویسنده..."
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+        </form>
+
+        <a href="/ketabook/" class="search-back-link">
+            بازگشت به فروشگاه
+        </a>
+
+    </section>
+
+    <section class="search-results-shell">
+
+        <div class="search-loading" id="search-loading">
+            در حال دریافت کتاب‌ها...
+        </div>
+
+        <div class="search-books-grid" id="search-books-grid"></div>
+
+        <div class="search-empty-state" id="search-empty-state" hidden>
+
+            <div class="search-empty-icon">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="M21 21l-4.3-4.3"></path>
+                </svg>
+            </div>
+
+            <h2>کتابی با این جستجو پیدا نشد</h2>
+
+            <p id="search-empty-text">
+                نام کتاب، دسته‌بندی یا نویسنده را کمی متفاوت‌تر وارد کنید.
+            </p>
+
+            <a href="/ketabook/" class="search-empty-link">
+                مشاهده کتاب‌ها
+            </a>
+
+        </div>
+
+    </section>
+
+    <template id="search-book-template">
+
+        <article class="search-book-card" data-book-card>
+
+            <a href="#" class="search-book-link" data-book-link>
+
+                <div class="search-book-cover">
+
+                    <img
+                        src=""
+                        alt=""
+                        data-book-cover
+                        hidden
+                    >
+
+                    <div class="search-book-cover-fallback" data-book-cover-fallback>
+                        کتابوک
+                    </div>
+
+                    <span class="search-book-type-badge" data-book-type-badge title="نوع کتاب">
+                        <span data-book-type-icon></span>
+                    </span>
+
+                </div>
+
+                <div class="search-book-body">
+
+                    <h2 data-book-title>نام کتاب</h2>
+
+                    <p class="search-book-author" data-book-author>
+                        نویسنده نامشخص
+                    </p>
+
+                    <div class="search-book-price-row">
+
+                        <span class="search-book-price" data-book-price>
+                            ۰ تومان
+                        </span>
+
+                        <span class="search-book-old-price" data-book-old-price hidden>
+                            ۰ تومان
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </article>
+
+    </template>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'catalog/js/search.js' %}?v=2" defer></script>
+{% endblock %}

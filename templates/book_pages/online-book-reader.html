@@ -1,0 +1,85 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    مطالعه کتاب آنلاین | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'catalog/css/online-book-reader.css' %}?v=20">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="online-reader-page"
+    id="online-reader-page"
+    data-my-online-books-api="/account/api/my-online-books/"
+    data-online-books-api="/catalog/api/online-books/"
+    data-login-url="/account/login/"
+    data-home-url="/ketabook/"
+>
+
+    <header class="reader-header">
+
+        <a href="/ketabook/" class="reader-return-button">
+            بازگشت به سایت
+        </a>
+
+        <div class="reader-title-box">
+            <h1 id="reader-title">در حال دریافت کتاب...</h1>
+            <p id="reader-status">لطفاً چند لحظه صبر کنید.</p>
+        </div>
+
+        <button
+            type="button"
+            class="reader-add-button"
+            id="reader-add-mybooks-button"
+        >
+            افزودن به کتاب‌های من
+        </button>
+
+    </header>
+
+    <main class="reader-main">
+
+        <button
+            type="button"
+            class="reader-page-button"
+            id="reader-prev-button"
+        >
+            صفحه قبل
+        </button>
+
+        <div class="reader-image-frame">
+
+            <img
+                src=""
+                alt="online book page"
+                id="reader-page-image"
+                class="reader-page-image"
+            >
+
+        </div>
+
+        <button
+            type="button"
+            class="reader-page-button"
+            id="reader-next-button"
+        >
+            صفحه بعد
+        </button>
+
+    </main>
+
+    <footer class="reader-footer">
+        <span id="reader-page-label">صفحه ۰ از ۰</span>
+    </footer>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'catalog/js/online-book-reader.js' %}?v=20" defer></script>
+{% endblock %}

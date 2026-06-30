@@ -1,0 +1,139 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    کیف پول | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'account/css/set-profile.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'payment/css/wallet.css' %}?v=4">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="set-profile-page wallet-page"
+    id="wallet-page"
+    data-wallet-api="/payment/api/wallet/"
+    data-premium-api="/payment/api/premium/"
+    data-cart-api="/cart/api/carts/"
+    data-home-url="/ketabook/"
+    data-login-url="/account/login/"
+    data-profile-url="/account/profile/"
+    data-cart-url="/cart/"
+    data-wallet-url="/payment/wallet/"
+    data-premium-url="/payment/premium/"
+    data-payment-gateway-url="/payment/gateway/"
+>
+
+    <div class="profile-dashboard-layout">
+
+        <!-- ================= WALLET WINDOW ================= -->
+        <div class="profile-window wallet-window">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-header-row wallet-header-row">
+
+                <div class="profile-heading">
+                    <h1>کیف پول</h1>
+                    <p>مدیریت موجودی حساب کتابوک شما</p>
+                </div>
+
+                <div class="wallet-balance-pill">
+                    <span>موجودی کیف پول</span>
+                    <strong id="wallet-main-balance">۰ تومان</strong>
+                </div>
+
+            </div>
+
+            <div
+                class="wallet-status"
+                id="wallet-status"
+                role="status"
+                aria-live="polite"
+                hidden
+            ></div>
+
+
+            <!-- ================= WALLET INFO ================= -->
+            <section class="wallet-info-card">
+
+                <div class="wallet-info-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12H5a2 2 0 0 1-2-2z"></path>
+                        <path d="M17 12h4v4h-4a2 2 0 0 1 0-4z"></path>
+                    </svg>
+                </div>
+
+                <div class="wallet-info-text">
+                    <h2>شارژ و استفاده از کیف پول</h2>
+
+                    <p>
+                        کیف پول میتواند راهی برای خریدن کتاب باشد همچنین
+                        برای خرید اشتراک کتاب های آنلاین ؛ کیف پول را شارژ کنید.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- ================= CHARGE BUTTON ONLY ================= -->
+            <section class="wallet-charge-action-card">
+
+                <div class="wallet-charge-action-text">
+                    <h2>افزایش موجودی کیف پول</h2>
+                    <p>
+                        برای شارژ کیف پول، وارد صفحه پرداخت شوید و بعد از انتخاب درگاه پرداخت، مبلغ مورد نظر را پرداخت کنید.
+                    </p>
+                </div>
+
+                <a
+                    href="/payment/gateway/?source=wallet&task=wallet_charge"
+                    class="wallet-charge-button"
+                    id="wallet-charge-button"
+                >
+                    شارژ کیف پول
+                </a>
+
+            </section>
+
+
+            <!-- ================= LOGIN STATE ================= -->
+            <div class="wallet-login-state" id="wallet-login-state" hidden>
+
+                <div class="wallet-login-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 21a8 8 0 0 1 16 0"></path>
+                    </svg>
+                </div>
+
+                <h2>برای مشاهده کیف پول وارد حساب شوید</h2>
+
+                <p>
+                    موجودی کیف پول و وضعیت اشتراک ویژه بعد از ورود به حساب کاربری نمایش داده می‌شود.
+                </p>
+
+                <a href="/account/login/" class="wallet-login-link">
+                    حساب کاربری
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {% with side_nav_active="wallet" %}
+            {% include "partials/side-nav.html" %}
+        {% endwith %}
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'payment/js/wallet.js' %}?v=4" defer></script>
+{% endblock %}

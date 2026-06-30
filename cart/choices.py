@@ -1,3 +1,5 @@
+#ORDER STATUS :
+
 PENDING = "pending"
 PROCESSING = "processing"
 DELIVERED = "delivered"
@@ -9,6 +11,10 @@ ORDER_STATUS_CHOICES = (
     (DELIVERED, "Delivered"),
     (CANCELLED, "Cancelled"),
 )
+
+
+
+#PAYMENT STATUS :
 
 PAYMENT_PENDING = "payment_pending"
 PAID = "paid"

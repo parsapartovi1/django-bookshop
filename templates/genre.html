@@ -1,0 +1,149 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    دسته‌بندی کتاب‌ها | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'catalog/css/genre.css' %}?v=6">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="genre-page"
+    id="genre-page"
+    data-books-api="/catalog/api/books/"
+    data-online-books-api="/catalog/api/online-books/"
+    data-login-url="/account/login/"
+    data-cart-url="/cart/"
+>
+
+    <header class="genre-hero">
+
+        <div class="genre-hero-text">
+            <p class="genre-eyebrow">دسته‌بندی کتاب‌ها</p>
+
+            <h1 id="genre-page-title">
+                در حال دریافت کتاب‌ها...
+            </h1>
+
+            <p id="genre-page-subtitle">
+                کتاب‌های مرتبط با این ژانر اینجا نمایش داده می‌شوند.
+            </p>
+        </div>
+
+        <a href="/ketabook/" class="genre-back-link">
+            بازگشت به خانه
+        </a>
+
+    </header>
+
+    <section class="genre-toolbar">
+
+        <div class="genre-count-box">
+            <span>تعداد کتاب‌ها</span>
+            <strong id="genre-books-count">۰</strong>
+        </div>
+
+        <div class="genre-search-box">
+            <input
+                type="search"
+                id="genre-search-input"
+                placeholder="جستجو در همین دسته‌بندی..."
+                autocomplete="off"
+            >
+        </div>
+
+    </section>
+
+    <section class="genre-books-shell">
+
+        <div class="genre-books-grid" id="genre-books-grid"></div>
+
+        <div class="genre-empty-state" id="genre-empty-state" hidden>
+
+            <div class="genre-empty-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>
+                </svg>
+            </div>
+
+            <h2>کتابی برای این دسته‌بندی پیدا نشد</h2>
+
+            <p>
+                بعد از اضافه شدن کتاب‌های جدید، این بخش در دسترس خواهد بود.
+            </p>
+
+            <a href="/ketabook/" class="genre-empty-link">
+                برگشت به فروشگاه
+            </a>
+
+        </div>
+
+    </section>
+
+    <template id="genre-book-template">
+
+        <article class="genre-book-card" data-book-card>
+
+            <a href="#" class="genre-book-cover-link" data-book-link>
+
+                <div class="genre-book-cover">
+
+                    <img
+                        src=""
+                        alt=""
+                        data-book-cover
+                        hidden
+                    >
+
+                    <div class="genre-book-cover-fallback" data-book-cover-fallback>
+                        کتابوک
+                    </div>
+
+                    <span class="genre-book-type-badge" data-book-type-badge title="نوع کتاب">
+                        <span data-book-type-icon></span>
+                    </span>
+
+                </div>
+
+            </a>
+
+            <div class="genre-book-body">
+
+                <a href="#" class="genre-book-title-link" data-book-title-link>
+                    <h2 data-book-title>نام کتاب</h2>
+                </a>
+
+                <p class="genre-book-author" data-book-author>
+                    نویسنده نامشخص
+                </p>
+
+                <div class="genre-book-price-row">
+
+                    <span class="genre-book-price" data-book-price>
+                        ۰ تومان
+                    </span>
+
+                    <span class="genre-book-old-price" data-book-old-price hidden>
+                        ۰ تومان
+                    </span>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    </template>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'catalog/js/genre.js' %}?v=6" defer></script>
+{% endblock %}

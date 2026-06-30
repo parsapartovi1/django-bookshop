@@ -1,10 +1,10 @@
+from django.utils import timezone
 from django.db import models
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-import random
-import string
-from django.core.exceptions import ValidationError
-# Create your models here.
+
+from .choices import FACTOR_TYPE_CHOICES
+
 
 
 class UserManager(BaseUserManager):
@@ -28,6 +28,7 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self.create_user(number, password, **extra_fields)
+
 
 
 class User(AbstractUser):
@@ -74,6 +75,7 @@ class User(AbstractUser):
         return self.number
 
 
+
 class Profile(models.Model):
     user = models.OneToOneField(
         User,
@@ -86,6 +88,15 @@ class Profile(models.Model):
         verbose_name="name",
         help_text="whats your name?",
         default="",
+    )
+
+    username=models.CharField(
+        verbose_name="username",
+        help_text="useres username",
+        max_length=100,
+        unique=True,
+        null=True,
+        blank=True
     )
 
     photo = models.ImageField(
@@ -103,9 +114,10 @@ class Profile(models.Model):
         null=True,
     )
 
-    address = models.CharField(
-        verbose_name="address",
-        help_text="Enter your address",
+    post_code = models.CharField(
+        verbose_name="post code",
+        help_text="Enter your postcode",
+        max_length=20,
         blank=True,
         null=True,
     )
@@ -156,3 +168,138 @@ class Review(models.Model) :
 
     def __str__(self):
         return f"review of {self.user.number}"
+
+
+
+class Factor(models.Model):
+    BOOK_PURCHASE = "book_purchase"
+    BOOK = "book"  # legacy compatibility
+    WALLET_CHARGE = "wallet_charge"
+    PREMIUM = "premium"
+
+    FACTOR_TYPE_CHOICES = (
+        (BOOK_PURCHASE, "Book Purchase"),
+        (BOOK, "Book"),
+        (WALLET_CHARGE, "Wallet Charge"),
+        (PREMIUM, "Premium"),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="user_factors",
+    )
+
+    factor_type = models.CharField(
+        max_length=30,
+        choices=FACTOR_TYPE_CHOICES,
+        default=BOOK_PURCHASE,
+    )
+
+    title = models.CharField(
+        max_length=255,
+    )
+
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+    )
+
+    items = models.JSONField(
+        default=list,
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    last_update = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        verbose_name = "4. factor"
+        verbose_name_plural = "4. factors"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.title} - {self.user.number}"
+
+
+class UserOnlineBook(models.Model):
+    PURCHASED = "purchased"
+    PREMIUM = "premium"
+
+    ACCESS_SOURCE_CHOICES = (
+        (PURCHASED, "Purchased"),
+        (PREMIUM, "Premium"),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="user_online_books",
+    )
+
+    online_book = models.ForeignKey(
+        "catalog.OnlineBook",
+        on_delete=models.CASCADE,
+        related_name="user_online_book_items",
+    )
+
+    access_source = models.CharField(
+        max_length=30,
+        choices=ACCESS_SOURCE_CHOICES,
+        default=PURCHASED,
+    )
+
+    premium_until = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    last_update = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        verbose_name = "5. user online book"
+        verbose_name_plural = "5. user online books"
+        ordering = ["created_at"]
+        unique_together = ("user", "online_book")
+
+    def __str__(self):
+        title = getattr(self.online_book, "title", None)
+        return f"{self.user.number} - {title.name if title else 'Online Book'}"
+
+    @property
+    def is_access_active(self):
+        if self.access_source == self.PURCHASED:
+            return True
+
+        if self.access_source == self.PREMIUM:
+            if not self.premium_until:
+                return False
+
+            return self.premium_until > timezone.now()
+
+        return False
+
+    @property
+    def access_message(self):
+        if self.access_source == self.PURCHASED:
+            return "bought"
+
+        if self.access_source == self.PREMIUM and self.is_access_active:
+            return "premium active"
+
+        if self.access_source == self.PREMIUM and not self.is_access_active:
+            return "to access again but premium"
+
+        return ""

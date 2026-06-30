@@ -1,0 +1,159 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    نظرهای من | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'account/css/set-profile.css' %}?v=10">
+    <link rel="stylesheet" href="{% static 'account/css/reviews.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="set-profile-page reviews-page"
+    id="reviews-page"
+    data-my-reviews-api="/account/api/review/my-reviews/"
+    data-review-api-base="/account/api/review/"
+    data-login-url="/account/login/"
+    data-home-url="/ketabook/"
+>
+
+    <div class="profile-dashboard-layout">
+
+        <div class="profile-window reviews-window">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-header-row reviews-header-row">
+
+                <div class="profile-heading">
+                    <h1>نظرهای من</h1>
+                    <p id="reviews-count-label">در حال دریافت نظرهای شما...</p>
+                </div>
+
+                <a href="/ketabook/" class="reviews-home-link">
+                    بازگشت به کتاب‌ها
+                </a>
+
+            </div>
+
+            <div
+                class="reviews-status"
+                id="reviews-status"
+                role="status"
+                aria-live="polite"
+                hidden
+            ></div>
+
+            <section class="reviews-list-panel">
+
+                <div class="reviews-list-head">
+                    <span>کتاب و نظر</span>
+                    <span>تاریخ ثبت</span>
+                    <span>عملیات</span>
+                </div>
+
+                <div class="reviews-items-list" id="reviews-items-list"></div>
+
+                <div class="reviews-empty-state" id="reviews-empty-state" hidden>
+
+                    <div class="reviews-empty-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>
+                            <path d="M8 9h8"></path>
+                            <path d="M8 13h5"></path>
+                        </svg>
+                    </div>
+
+                    <h2>هنوز نظری ثبت نکرده‌اید</h2>
+
+                    <p>
+                        بعد از ثبت نظر برای کتاب‌ها، همه نظرهای شما اینجا نمایش داده می‌شوند و می‌توانید آن‌ها را ویرایش یا حذف کنید.
+                    </p>
+
+                    <a href="/ketabook/" class="reviews-empty-link">
+                        مشاهده کتاب‌ها
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        {% with side_nav_active="reviews" %}
+            {% include "partials/side-nav.html" %}
+        {% endwith %}
+
+
+        <template id="review-item-template">
+            <article class="review-item" data-review-item>
+
+                <a href="#" class="review-book-cover" data-book-link>
+                    <img src="" alt="" data-book-cover hidden>
+                    <span class="review-book-cover-fallback" data-book-cover-fallback>کتابوک</span>
+                </a>
+
+                <div class="review-content">
+
+                    <a href="#" class="review-book-title" data-book-title>
+                        نام کتاب
+                    </a>
+
+                    <p class="review-text" data-review-text>
+                        متن نظر
+                    </p>
+
+                    <form class="review-edit-form" data-review-edit-form hidden>
+                        <textarea
+                            class="review-edit-textarea"
+                            data-review-edit-textarea
+                            rows="4"
+                            maxlength="1200"
+                            placeholder="نظر جدید خود را بنویسید..."
+                        ></textarea>
+
+                        <div class="review-edit-actions">
+                            <button type="submit" class="review-save-button">
+                                ذخیره تغییرات
+                            </button>
+
+                            <button type="button" class="review-cancel-button" data-cancel-edit>
+                                انصراف
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="review-date" data-review-date>
+                    ---
+                </div>
+
+                <div class="review-actions">
+
+                    <button type="button" class="review-edit-button" data-edit-review>
+                        ویرایش
+                    </button>
+
+                    <button type="button" class="review-delete-button" data-delete-review>
+                        حذف
+                    </button>
+
+                </div>
+
+            </article>
+        </template>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'account/js/reviews.js' %}?v=1" defer></script>
+{% endblock %}

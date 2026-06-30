@@ -1,0 +1,622 @@
+* {
+    box-sizing: border-box;
+}
+
+[hidden],
+.reviews-empty-state[hidden],
+.reviews-status[hidden],
+.review-edit-form[hidden],
+.review-book-cover img[hidden],
+.review-book-cover-fallback[hidden] {
+    display: none !important;
+}
+
+:root {
+    --reviews-bg: #17181d;
+    --reviews-window: #1f2027;
+    --reviews-window-2: #24252d;
+    --reviews-card: rgba(255, 255, 255, 0.045);
+    --reviews-card-2: rgba(255, 255, 255, 0.065);
+    --reviews-border: rgba(255, 255, 255, 0.08);
+
+    --reviews-text: #ffffff;
+    --reviews-muted: rgba(255, 255, 255, 0.66);
+    --reviews-faint: rgba(255, 255, 255, 0.42);
+
+    --reviews-orange: #c45500;
+    --reviews-orange-light: #ff7a18;
+    --reviews-green: #10a56f;
+    --reviews-red: #e84d5b;
+
+    --reviews-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.34),
+        0 8px 24px rgba(0, 0, 0, 0.24);
+}
+
+html[data-theme="light"],
+body[data-theme="light"] {
+    --reviews-bg: #f7f7f8;
+    --reviews-window: #ffffff;
+    --reviews-window-2: #f4f4f6;
+    --reviews-card: rgba(31, 36, 48, 0.035);
+    --reviews-card-2: rgba(31, 36, 48, 0.055);
+    --reviews-border: rgba(31, 36, 48, 0.08);
+
+    --reviews-text: #1f2430;
+    --reviews-muted: rgba(31, 36, 48, 0.64);
+    --reviews-faint: rgba(31, 36, 48, 0.42);
+
+    --reviews-shadow:
+        0 28px 70px rgba(42, 54, 70, 0.13),
+        0 8px 22px rgba(42, 54, 70, 0.06);
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.reviews-page {
+    min-height: calc(100vh - 82px);
+    padding: 34px 24px 78px;
+    direction: rtl;
+    color: var(--reviews-text);
+    background:
+        radial-gradient(circle at 12% 16%, rgba(59, 130, 246, 0.12), transparent 34%),
+        radial-gradient(circle at 88% 12%, rgba(255, 122, 24, 0.1), transparent 34%),
+        var(--reviews-bg);
+}
+
+.reviews-page .profile-dashboard-layout {
+    width: min(1160px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 76px;
+    gap: 20px;
+    align-items: stretch;
+    direction: ltr;
+}
+
+.reviews-page .profile-dashboard-layout > *:not(.profile-side-navbar) {
+    min-width: 0;
+    direction: rtl;
+}
+
+/* =========================================================
+   WINDOW
+========================================================= */
+
+.reviews-window {
+    position: relative;
+    min-width: 0;
+    min-height: 650px;
+    overflow: hidden;
+    border-radius: 32px;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+        var(--reviews-window);
+    border: 1px solid var(--reviews-border);
+    box-shadow: var(--reviews-shadow);
+}
+
+.reviews-window .profile-cover {
+    height: 132px;
+    border-radius: 32px 32px 0 0;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(126, 179, 255, 0.62),
+            rgba(255, 255, 255, 0.48),
+            rgba(255, 231, 160, 0.82)
+        ),
+        linear-gradient(
+            135deg,
+            rgba(255, 122, 24, 0.12),
+            rgba(59, 130, 246, 0.1)
+        ) !important;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.reviews-header-row {
+    width: 100%;
+    margin-top: -54px;
+    padding: 0 42px 30px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 22px;
+    direction: rtl;
+}
+
+.reviews-header-row .profile-heading {
+    min-width: 0;
+    padding: 24px 26px;
+    border-radius: 26px;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025)),
+        rgba(31, 32, 39, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+}
+
+.reviews-header-row .profile-heading h1 {
+    margin: 0 0 10px;
+    color: var(--reviews-text);
+    font-size: clamp(1.55rem, 3vw, 2.35rem);
+    font-weight: 950;
+    line-height: 1.35;
+}
+
+.reviews-header-row .profile-heading p {
+    margin: 0;
+    color: var(--reviews-muted);
+    font-size: 0.92rem;
+    font-weight: 780;
+    line-height: 1.9;
+}
+
+.reviews-home-link {
+    min-width: 136px;
+    height: 46px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 950;
+    background: linear-gradient(135deg, var(--reviews-orange-light), var(--reviews-orange), #923b00);
+    box-shadow: 0 14px 28px rgba(196, 85, 0, 0.22);
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.reviews-status {
+    width: calc(100% - 84px);
+    margin: 0 42px 24px;
+    padding: 13px 15px;
+    border-radius: 16px;
+    direction: rtl;
+    text-align: right;
+    color: var(--reviews-text);
+    background: rgba(16, 165, 111, 0.1);
+    border: 1px solid rgba(16, 165, 111, 0.18);
+    font-size: 0.86rem;
+    font-weight: 850;
+    line-height: 1.9;
+}
+
+.reviews-status.is-error {
+    color: var(--reviews-red);
+    background: rgba(232, 77, 91, 0.1);
+    border-color: rgba(232, 77, 91, 0.22);
+}
+
+.reviews-status.is-success {
+    color: var(--reviews-green);
+}
+
+/* =========================================================
+   LIST
+========================================================= */
+
+.reviews-list-panel {
+    margin: 0 42px 36px;
+}
+
+.reviews-list-head {
+    min-height: 48px;
+    padding: 0 18px;
+    display: grid;
+    grid-template-columns: minmax(420px, 1fr) 150px 170px;
+    gap: 12px;
+    align-items: center;
+    border-radius: 18px;
+    color: var(--reviews-muted);
+    background: var(--reviews-card);
+    border: 1px solid var(--reviews-border);
+    font-size: 0.78rem;
+    font-weight: 900;
+}
+
+.reviews-list-head span:not(:first-child) {
+    text-align: center;
+}
+
+.reviews-items-list {
+    margin-top: 12px;
+    display: grid;
+    gap: 12px;
+}
+
+.review-item {
+    min-height: 128px;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 86px minmax(0, 1fr) 150px 170px;
+    gap: 14px;
+    align-items: center;
+    border-radius: 22px;
+    background: var(--reviews-card);
+    border: 1px solid var(--reviews-border);
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        background 0.22s ease;
+}
+
+.review-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(196, 85, 0, 0.22);
+    background:
+        linear-gradient(135deg, rgba(255, 122, 24, 0.055), rgba(196, 85, 0, 0.025)),
+        var(--reviews-card);
+}
+
+.review-book-cover {
+    width: 86px;
+    height: 102px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    border-radius: 17px;
+    color: #ffffff;
+    text-decoration: none;
+    background: linear-gradient(145deg, var(--reviews-orange-light), var(--reviews-orange), #923b00);
+    box-shadow: 0 12px 24px rgba(196, 85, 0, 0.16);
+}
+
+.review-book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.review-book-cover-fallback {
+    font-size: 0.78rem;
+    font-weight: 950;
+}
+
+.review-content {
+    min-width: 0;
+    display: grid;
+    gap: 10px;
+}
+
+.review-book-title {
+    width: fit-content;
+    max-width: 100%;
+    color: var(--reviews-text);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 950;
+    line-height: 1.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.review-book-title:hover {
+    color: var(--reviews-orange-light);
+}
+
+.review-text {
+    margin: 0;
+    color: var(--reviews-muted);
+    font-size: 0.88rem;
+    font-weight: 760;
+    line-height: 2;
+    white-space: pre-wrap;
+}
+
+.review-date {
+    color: var(--reviews-muted);
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 850;
+    line-height: 1.8;
+}
+
+.review-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.review-edit-button,
+.review-delete-button,
+.review-save-button,
+.review-cancel-button {
+    min-width: 76px;
+    height: 40px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    border: 0;
+    cursor: pointer;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 950;
+    background: linear-gradient(135deg, var(--reviews-orange-light), var(--reviews-orange), #923b00);
+    box-shadow: 0 12px 24px rgba(196, 85, 0, 0.16);
+}
+
+.review-delete-button {
+    background: linear-gradient(135deg, var(--reviews-red), #b91c1c);
+    box-shadow: 0 12px 24px rgba(232, 77, 91, 0.14);
+}
+
+.review-cancel-button {
+    color: var(--reviews-text);
+    background: var(--reviews-window-2);
+    border: 1px solid var(--reviews-border);
+    box-shadow: none;
+}
+
+/* =========================================================
+   EDIT FORM
+========================================================= */
+
+.review-edit-form {
+    display: grid;
+    gap: 12px;
+}
+
+.review-edit-textarea {
+    width: 100%;
+    min-height: 104px;
+    resize: vertical;
+    padding: 14px 15px;
+    border-radius: 16px;
+    outline: none;
+    color: var(--reviews-text);
+    background: var(--reviews-window-2);
+    border: 1px solid var(--reviews-border);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 760;
+    line-height: 2;
+    direction: rtl;
+    text-align: right;
+}
+
+.review-edit-textarea:focus {
+    border-color: rgba(255, 122, 24, 0.35);
+    box-shadow: 0 0 0 4px rgba(255, 122, 24, 0.08);
+}
+
+.review-edit-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.reviews-empty-state {
+    margin-top: 16px;
+    padding: 44px 24px;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 14px;
+    border-radius: 26px;
+    background: var(--reviews-card);
+    border: 1px solid var(--reviews-border);
+}
+
+.reviews-empty-icon {
+    width: 74px;
+    height: 74px;
+    display: grid;
+    place-items: center;
+    border-radius: 24px;
+    color: var(--reviews-orange-light);
+    background: rgba(255, 122, 24, 0.1);
+}
+
+.reviews-empty-icon svg {
+    width: 36px;
+    height: 36px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.reviews-empty-state h2 {
+    margin: 0;
+    color: var(--reviews-text);
+    font-size: 1.14rem;
+    font-weight: 950;
+    line-height: 1.8;
+}
+
+.reviews-empty-state p {
+    max-width: 540px;
+    margin: 0;
+    color: var(--reviews-muted);
+    font-size: 0.9rem;
+    font-weight: 760;
+    line-height: 2;
+}
+
+.reviews-empty-link {
+    min-width: 132px;
+    height: 46px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 950;
+    background: linear-gradient(135deg, var(--reviews-orange-light), var(--reviews-orange), #923b00);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1040px) {
+    .reviews-list-head {
+        display: none;
+    }
+
+    .review-item {
+        grid-template-columns: 86px minmax(0, 1fr);
+        grid-template-areas:
+            "cover content"
+            "date content"
+            "actions actions";
+    }
+
+    .review-book-cover {
+        grid-area: cover;
+    }
+
+    .review-content {
+        grid-area: content;
+    }
+
+    .review-date {
+        grid-area: date;
+        text-align: right;
+    }
+
+    .review-actions {
+        grid-area: actions;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 900px) {
+    .reviews-page .profile-dashboard-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        direction: rtl;
+    }
+
+    .reviews-page .profile-side-navbar {
+        order: -1;
+        min-height: auto;
+    }
+}
+
+@media (max-width: 680px) {
+    .reviews-page {
+        padding: 24px 14px 56px;
+    }
+
+    .reviews-window {
+        min-height: auto;
+        border-radius: 26px;
+    }
+
+    .reviews-window .profile-cover {
+        height: 112px;
+        border-radius: 26px 26px 0 0;
+    }
+
+    .reviews-header-row {
+        margin-top: -42px;
+        padding: 0 18px 22px;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .reviews-header-row .profile-heading {
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .reviews-home-link {
+        width: 100%;
+    }
+
+    .reviews-status,
+    .reviews-list-panel {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+
+    .reviews-status {
+        width: calc(100% - 36px);
+    }
+
+    .review-item {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "cover"
+            "content"
+            "date"
+            "actions";
+    }
+
+    .review-book-cover {
+        width: 100%;
+        height: 210px;
+    }
+
+    .review-book-title {
+        white-space: normal;
+    }
+
+    .review-date {
+        text-align: right;
+    }
+
+    .review-actions,
+    .review-edit-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .review-edit-button,
+    .review-delete-button,
+    .review-save-button,
+    .review-cancel-button {
+        width: 100%;
+    }
+}
+
+html[data-theme="light"] .reviews-page .profile-heading,
+body[data-theme="light"] .reviews-page .profile-heading {
+    color: #1f2430 !important;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.44)),
+        rgba(255, 255, 255, 0.7) !important;
+    border-color: rgba(31, 36, 48, 0.08) !important;
+    box-shadow: 0 18px 36px rgba(42, 54, 70, 0.10) !important;
+}
+
+html[data-theme="light"] .reviews-page .profile-heading h1,
+body[data-theme="light"] .reviews-page .profile-heading h1 {
+    color: #1f2430 !important;
+}
+
+html[data-theme="light"] .reviews-page .profile-heading p,
+body[data-theme="light"] .reviews-page .profile-heading p {
+    color: rgba(31, 36, 48, 0.64) !important;
+}

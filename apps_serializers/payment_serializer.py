@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.utils import timezone
 
 from payment.models import Premium, Wallet
 
@@ -25,13 +24,10 @@ class PremiumSerializer(serializers.ModelSerializer):
         ]
 
     def get_is_active(self, obj):
-        if not obj.premium_account:
-            return False
+        if hasattr(obj, "is_active"):
+            return obj.is_active
 
-        if obj.premium_expiration is None:
-            return True
-
-        return obj.premium_expiration > timezone.now()
+        return False
 
 
 class WalletSerializer(serializers.ModelSerializer):
@@ -41,6 +37,7 @@ class WalletSerializer(serializers.ModelSerializer):
     )
 
     premium_status = serializers.SerializerMethodField()
+
     premium_expiration = serializers.DateTimeField(
         source="premium.premium_expiration",
         read_only=True,
@@ -80,19 +77,20 @@ class WalletSerializer(serializers.ModelSerializer):
         ]
 
     def get_premium_status(self, obj):
-        premium = obj.premium
+        premium = getattr(obj, "premium", None)
 
-        if not premium.premium_account:
+        if not premium:
             return False
 
-        if premium.premium_expiration is None:
-            return True
+        if hasattr(premium, "is_active"):
+            return premium.is_active
 
-        return premium.premium_expiration > timezone.now()
+        return False
 
 
 class WalletSummarySerializer(serializers.ModelSerializer):
     premium_status = serializers.SerializerMethodField()
+
     premium_expiration = serializers.DateTimeField(
         source="premium.premium_expiration",
         read_only=True,
@@ -108,15 +106,15 @@ class WalletSummarySerializer(serializers.ModelSerializer):
         ]
 
     def get_premium_status(self, obj):
-        premium = obj.premium
+        premium = getattr(obj, "premium", None)
 
-        if not premium.premium_account:
+        if not premium:
             return False
 
-        if premium.premium_expiration is None:
-            return True
+        if hasattr(premium, "is_active"):
+            return premium.is_active
 
-        return premium.premium_expiration > timezone.now()
+        return False
 
 
 class ChargeWalletSerializer(serializers.Serializer):

@@ -1,0 +1,160 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}
+    ناشر | کتابوک
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'catalog/css/publisher-detail.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="publisher-page"
+    id="publisher-page"
+    data-publisher-api-base="/catalog/api/publishers/"
+    data-books-api="/catalog/api/books/"
+    data-online-books-api="/catalog/api/online-books/"
+    data-home-url="/ketabook/"
+>
+
+    <div class="publisher-shell">
+
+        <div class="publisher-status" id="publisher-status" hidden></div>
+
+        <section class="publisher-hero">
+
+            <div class="publisher-picture-wrap">
+                <img
+                    src=""
+                    alt=""
+                    class="publisher-picture"
+                    id="publisher-picture"
+                    hidden
+                >
+
+                <div class="publisher-picture-fallback" id="publisher-picture-fallback">
+                    ناشر
+                </div>
+            </div>
+
+            <div class="publisher-info">
+
+                <div class="publisher-label">
+                    ناشر کتابوک
+                </div>
+
+                <h1 id="publisher-name">
+                    در حال دریافت اطلاعات ناشر...
+                </h1>
+
+                <p id="publisher-subtitle">
+                    کتاب‌های منتشرشده توسط این ناشر در ادامه نمایش داده می‌شوند.
+                </p>
+
+                <div class="publisher-actions">
+                    <a href="/ketabook/" class="publisher-back-link">
+                        بازگشت به کتاب‌ها
+                    </a>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="publisher-books-section">
+
+            <div class="publisher-books-head">
+
+                <div>
+                    <h2>کتاب‌های این ناشر</h2>
+                    <p id="publisher-books-count">در حال دریافت کتاب‌ها...</p>
+                </div>
+
+            </div>
+
+            <div class="publisher-books-grid" id="publisher-books-grid"></div>
+
+            <div class="publisher-empty-state" id="publisher-empty-state" hidden>
+
+                <div class="publisher-empty-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H21"></path>
+                        <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H21v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>
+                        <path d="M8 6h8"></path>
+                        <path d="M8 10h6"></path>
+                    </svg>
+                </div>
+
+                <h3>کتابی برای این ناشر پیدا نشد</h3>
+
+                <p>
+                    هنوز کتابی برای این ناشر در فروشگاه ثبت نشده است.
+                </p>
+
+                <a href="/ketabook/" class="publisher-empty-link">
+                    مشاهده همه کتاب‌ها
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <template id="publisher-book-template">
+        <article class="publisher-book-card">
+
+            <a href="#" class="publisher-book-cover-link" data-book-link>
+                <img src="" alt="" class="publisher-book-cover" data-book-cover hidden>
+                <span class="publisher-book-cover-fallback" data-book-cover-fallback>کتابوک</span>
+
+                <span class="publisher-book-discount" data-book-discount hidden>
+                    تخفیف
+                </span>
+
+                <span class="publisher-book-type-badge" data-book-type-badge title="نوع کتاب">
+                    <span data-book-type-icon></span>
+                </span>
+            </a>
+
+            <div class="publisher-book-info">
+
+                <a href="#" class="publisher-book-title" data-book-title>
+                    نام کتاب
+                </a>
+
+                <p class="publisher-book-author" data-book-author>
+                    نویسنده نامشخص
+                </p>
+
+                <div class="publisher-book-meta">
+                    <span data-book-language>زبان نامشخص</span>
+                    <span data-book-level>سطح نامشخص</span>
+                </div>
+
+                <div class="publisher-book-price-row">
+                    <span class="publisher-book-old-price" data-book-old-price hidden>
+                        ۰ تومان
+                    </span>
+
+                    <strong class="publisher-book-price" data-book-price>
+                        ۰ تومان
+                    </strong>
+                </div>
+
+            </div>
+
+        </article>
+    </template>
+
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'catalog/js/publisher-detail.js' %}?v=7" defer></script>
+{% endblock %}
